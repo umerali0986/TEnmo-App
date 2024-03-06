@@ -1,12 +1,14 @@
 package com.techelevator.tenmo;
 
 import com.techelevator.tenmo.model.AuthenticatedUser;
+import com.techelevator.tenmo.model.Transfer;
 import com.techelevator.tenmo.model.User;
 import com.techelevator.tenmo.model.UserCredentials;
-import com.techelevator.tenmo.services.AccountService;
-import com.techelevator.tenmo.services.AuthenticationService;
-import com.techelevator.tenmo.services.ConsoleService;
-import com.techelevator.tenmo.services.UserService;
+import com.techelevator.tenmo.services.*;
+
+import java.math.BigDecimal;
+import java.util.InputMismatchException;
+import java.util.Scanner;
 
 public class App {
 
@@ -16,6 +18,10 @@ public class App {
     private final AuthenticationService authenticationService = new AuthenticationService(API_BASE_URL);
     private final AccountService accountService = new AccountService();
     private final UserService userService = new UserService();
+    private final TransferService transferService = new TransferService();
+
+    // TODO- delete scanner after implementation
+    private final Scanner scanner = new Scanner(System.in);
 
     private AuthenticatedUser currentUser;
 
@@ -65,6 +71,7 @@ public class App {
         } else {
             accountService.setAuthToken(currentUser.getToken());
             userService.setAuthToken(currentUser.getToken());
+            transferService.setAuthToken(currentUser.getToken());
         }
     }
 
@@ -107,8 +114,83 @@ public class App {
 	}
 
 	private void sendBucks() {
-		// TODO Auto-generated method stub
+		// TODO- move the logics around
         consoleService.printOtherUsers(userService.getOtherUsers());
+        boolean running = true;
+        int recipientId = 0;
+
+        while(running) {
+            System.out.println();
+            System.out.print("Please select id for recipient :");
+            String userInput = scanner.nextLine();
+
+
+            try {
+                 recipientId = Integer.parseInt(userInput);
+
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input for recipient id, please enter valid id");
+                continue;
+            }
+
+            if(userService.getUserById(recipientId) == null){
+                System.out.println("Recipient id is invalid");
+                continue;
+            }
+            else if(currentUser.getUser().getId() == recipientId){
+                System.out.println("You can't transfer money to your own account.");
+                continue;
+            }
+
+            break;
+        }
+
+        while(running) {
+            System.out.println();
+            System.out.print("Please enter the amount to send: ");
+
+            BigDecimal transferAmount;
+            try {
+
+                 transferAmount = scanner.nextBigDecimal();
+            }
+            catch (InputMismatchException e){
+                System.out.println("Input must be a valid currency amount.");
+                scanner.nextLine();
+                continue;
+            }
+
+            if(transferAmount.compareTo(new BigDecimal(0.01)) == -1){
+                System.out.println("Please enter an amount greater than $0.01 ");
+                continue;
+            }
+
+            if(transferAmount.scale() > 2){
+                System.out.println("Transfer amount must not contain more than 2 decimal places.");
+                continue;
+            }
+
+            if(transferAmount.compareTo(accountService.getBalance()) == 1){
+                System.out.println("Insufficient funds");
+            }
+
+            Transfer transfer = new Transfer();
+
+
+            transfer.setAmount(transferAmount);
+            // TODO- Get account_id from account table where a user_id is Equal(recipientId and currentSenderId) pass that to set account_from and account_to
+
+            transfer.setAccount_from(currentUser.getUser().getId());
+            transfer.setAccount_to(recipientId);
+
+            transfer.setTransfer_type_id(2);
+            transfer.setTransfer_status_id(2);
+
+            //TODO- send a http request with a body "transfer"
+
+            System.out.println(transferService.createReceipt(transfer));
+        }
+
 	}
 
 	private void requestBucks() {

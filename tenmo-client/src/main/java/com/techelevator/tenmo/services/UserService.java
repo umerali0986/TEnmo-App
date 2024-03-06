@@ -34,6 +34,23 @@ public class UserService {
         return users;
     }
 
+
+    public User getUserById(int id){
+        User user = null;
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(authToken);
+        HttpEntity<Void> entity =new HttpEntity<>(headers);
+
+        try {
+            ResponseEntity<User> response = restTemplate.exchange(API_BASE_URL + "/user/" + id, HttpMethod.GET, entity, User.class);
+            user = response.getBody();
+        } catch (RestClientResponseException | ResourceAccessException e) {
+            BasicLogger.log(e.getMessage());
+        }
+
+        return user;
+    }
+
     public void setAuthToken(String token) {
         authToken = token;
     }

@@ -4,6 +4,7 @@ import com.techelevator.tenmo.dao.JdbcUserDao;
 import com.techelevator.tenmo.model.User;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,6 +26,14 @@ public class UserController {
         List<User> otherUsers = null;
         otherUsers = jdbcUserDao.getOtherUsers(principal.getName());
         return otherUsers;
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(path = "/user/{id}", method = RequestMethod.GET)
+    public User getUserById(@PathVariable int id){
+        User user = null;
+        user = jdbcUserDao.getUserById(id);
+        return user;
     }
 
 }
