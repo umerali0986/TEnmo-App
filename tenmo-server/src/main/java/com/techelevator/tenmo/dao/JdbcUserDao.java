@@ -55,6 +55,7 @@ public class JdbcUserDao implements UserDao {
         return users;
     }
 
+
     @Override
     public User getUserByUsername(String username) {
         if (username == null) throw new IllegalArgumentException("Username cannot be null");
@@ -91,6 +92,23 @@ public class JdbcUserDao implements UserDao {
             throw new DaoException("Data integrity violation", e);
         }
         return newUser;
+    }
+
+    @Override
+    public List<User> getOtherUsers(String currentUserName) {
+        List<User> otherUsers = new ArrayList<>();
+        String sql = "SELECT * FROM tenmo_user WHERE username != ?;";
+
+        try {
+            SqlRowSet results = jdbcTemplate.queryForRowSet(sql, currentUserName);
+            while (results.next()) {
+                User user = mapRowToUser(results);
+                otherUsers.add(user);
+            }
+        } catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database", e);
+        }
+        return otherUsers;
     }
 
     private User mapRowToUser(SqlRowSet rs) {

@@ -1,10 +1,12 @@
 package com.techelevator.tenmo;
 
 import com.techelevator.tenmo.model.AuthenticatedUser;
+import com.techelevator.tenmo.model.User;
 import com.techelevator.tenmo.model.UserCredentials;
 import com.techelevator.tenmo.services.AccountService;
 import com.techelevator.tenmo.services.AuthenticationService;
 import com.techelevator.tenmo.services.ConsoleService;
+import com.techelevator.tenmo.services.UserService;
 
 public class App {
 
@@ -13,6 +15,7 @@ public class App {
     private final ConsoleService consoleService = new ConsoleService();
     private final AuthenticationService authenticationService = new AuthenticationService(API_BASE_URL);
     private final AccountService accountService = new AccountService();
+    private final UserService userService = new UserService();
 
     private AuthenticatedUser currentUser;
 
@@ -61,6 +64,7 @@ public class App {
             consoleService.printErrorMessage();
         } else {
             accountService.setAuthToken(currentUser.getToken());
+            userService.setAuthToken(currentUser.getToken());
         }
     }
 
@@ -104,7 +108,7 @@ public class App {
 
 	private void sendBucks() {
 		// TODO Auto-generated method stub
-		
+        consoleService.printOtherUsers(userService.getOtherUsers());
 	}
 
 	private void requestBucks() {
