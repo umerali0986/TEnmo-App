@@ -15,7 +15,7 @@ public class ConsoleService {
     private final TransferService transferService = new TransferService();
     private final String blueColorCode = "\u001B[34m";
     private final String resetColorCode = "\u001B[0m";
-
+    //TODO - Maybe use this for all of our menu selections?
     public int promptForMenuSelection(String prompt) {
         int menuSelection;
         System.out.print(prompt);
@@ -51,8 +51,12 @@ public class ConsoleService {
 
     public void printMainMenu() {
         System.out.println();
+        System.out.println("-------------------------------------------");
+        System.out.println("Main Menu");
+        System.out.println("-------------------------------------------");
+        System.out.println();
         System.out.println("1: View your current balance");
-        System.out.println("2: View your past transfers");
+        System.out.println("2: View your past transactions");
         System.out.println("3: View your pending requests");
         System.out.println("4: Send TE bucks");
         System.out.println("5: Request TE bucks");

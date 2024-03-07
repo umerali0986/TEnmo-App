@@ -52,16 +52,29 @@ public class App {
     }
 
     private void handleRegister() {
+        System.out.println();
+        System.out.println("-------------------------------------------");
+        System.out.println("Register");
+        System.out.println("-------------------------------------------");
+        System.out.println();
         System.out.println("Please register a new user account");
         UserCredentials credentials = consoleService.promptForCredentials();
         if (authenticationService.register(credentials)) {
+            System.out.println();
+            System.out.println("-------------------------------------------");
             System.out.println("Registration successful. You can now login.");
+            System.out.println("-------------------------------------------");
         } else {
             consoleService.printErrorMessage();
         }
     }
 
     private void handleLogin() {
+        System.out.println();
+        System.out.println("-------------------------------------------");
+        System.out.println("Login");
+        System.out.println("-------------------------------------------");
+        System.out.println();
         UserCredentials credentials = consoleService.promptForCredentials();
         currentUser = authenticationService.login(credentials);
         if (currentUser == null) {
@@ -105,6 +118,10 @@ public class App {
 
         while(running) {
             System.out.println();
+            System.out.println("-------------------------------------------");
+            System.out.println("Transactions Menu");
+            System.out.println("-------------------------------------------");
+            System.out.println();
             System.out.println("1: View all transactions");
             System.out.println("2: View transaction by id ");
             System.out.println("0: Return to Main Menu ");
@@ -142,7 +159,12 @@ public class App {
     }
 
     private void viewCurrentBalance() {
-        System.out.println(accountService.getBalance());
+        System.out.println();
+        System.out.println("-------------------------------------------");
+        System.out.println("Current Balance");
+        System.out.println("-------------------------------------------");
+        System.out.println();
+        System.out.println("$" + accountService.getBalance());
 	}
 
     private void viewTransferDetails(){
@@ -183,6 +205,14 @@ public class App {
 		// TODO Auto-generated method stub
         Account account = accountService.getAccountByUserId(currentUser.getUser().getId());
         Transfer[] transferHistory = transferService.viewTransferHistory(account.getAccount_id());
+        System.out.println();
+        System.out.println("-------------------------------------------");
+        System.out.println("Current Balance");
+        //TODO - Continue improving visual formatting
+        System.out.println("ID     From/To       Amount       Balance");
+        System.out.println("-------------------------------------------");
+        System.out.println();
+
 
         for (Transfer transfer : transferHistory){
             if(transfer.getAccount_from() == accountService.getAccountByUserId(currentUser.getUser().getId()).getAccount_id()){
