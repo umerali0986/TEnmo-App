@@ -35,4 +35,10 @@ public class TransferController {
     public Transfer getTransferById(@PathVariable("id") int transferId){
         return jdbcTransferDao.getTransferById(transferId);
     }
+
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(path = "/transfer/{accountId}/{statusId}", method = RequestMethod.GET)
+    List<Transfer> getPendingTransferByAccountId(@PathVariable("accountId") int accountId,@PathVariable("statusId") int statusId) {
+        return jdbcTransferDao.getPendingTransferByAccountId(accountId, statusId);
+    }
 }

@@ -112,6 +112,24 @@ public class TransferService {
         return transferStatus;
     }
 
+    public Transfer[] getPendingTransfersByAccountId(int accountId, int statusId) {
+
+        Transfer[] pendingTransfers = null;
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(authToken);
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+
+        try{
+            ResponseEntity<Transfer[]> response = restTemplate.exchange(API_BASE_URL + "/transfer/" + accountId + "/" + statusId, HttpMethod.GET, entity, Transfer[].class);
+            pendingTransfers = response.getBody();
+        }
+        catch (RestClientResponseException | ResourceAccessException e) {
+            BasicLogger.log(e.getMessage());
+        }
+
+        return pendingTransfers;
+    }
+
     public void setAuthToken(String token) {
         authToken = token;
     }

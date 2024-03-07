@@ -36,6 +36,23 @@ public class JdbcTransferDao implements TransferDao{
 
         return transfer;
     }
+    @Override
+    public List<Transfer> getPendingTransferByAccountId(int accountId, int statusId) {
+
+        List<Transfer> pendingTransfers = new ArrayList<>();
+        String sql = "SELECT * FROM transfer WHERE (account_from = ? OR account_to = ?) AND transfer_status_id = ?;";
+
+        try {
+            SqlRowSet result = jdbcTemplate.queryForRowSet(sql, accountId, accountId, statusId);
+            while (result.next()){
+                pendingTransfers.add(mapRowToTransfer(result));
+            }
+        }catch (CannotGetJdbcConnectionException e){
+            throw new DaoException("Unable to connect to server or database");
+        }
+        return pendingTransfers;
+
+    }
 
 
 
