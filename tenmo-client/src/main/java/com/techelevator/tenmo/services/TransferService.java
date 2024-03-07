@@ -2,6 +2,8 @@ package com.techelevator.tenmo.services;
 
 import com.techelevator.tenmo.model.Account;
 import com.techelevator.tenmo.model.Transfer;
+import com.techelevator.tenmo.model.TransferStatus;
+import com.techelevator.tenmo.model.TransferType;
 import com.techelevator.util.BasicLogger;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -52,6 +54,62 @@ public class TransferService {
             BasicLogger.log(e.getMessage());
         }
         return transferHistory;
+    }
+
+
+    public Transfer getTransferById(int transferId){
+        Transfer transfer = null;
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(authToken);
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+
+        try{
+            ResponseEntity<Transfer> response = restTemplate.exchange(API_BASE_URL + "/transfer/" + transferId, HttpMethod.GET, entity, Transfer.class);
+            transfer = response.getBody();
+        }
+        catch (RestClientResponseException | ResourceAccessException e) {
+            BasicLogger.log(e.getMessage());
+        }
+
+        return transfer;
+    }
+
+    public TransferType getTransferTypeById(int transferTypeId){
+
+        //TODO- get rid of headers
+        TransferType transferType = null;
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(authToken);
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+
+        try{
+            ResponseEntity<TransferType> response = restTemplate.exchange(API_BASE_URL + "/transfer/type/" + transferTypeId, HttpMethod.GET, entity, TransferType.class);
+            transferType = response.getBody();
+        }
+        catch (RestClientResponseException | ResourceAccessException e) {
+            BasicLogger.log(e.getMessage());
+        }
+
+        return transferType;
+    }
+
+    public TransferStatus getTransferStatusById(int transferStatusId){
+
+        //TODO- get rid of headers
+        TransferStatus transferStatus = null;
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(authToken);
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+
+        try{
+            ResponseEntity<TransferStatus> response = restTemplate.exchange(API_BASE_URL + "/transfer/status/" + transferStatusId, HttpMethod.GET, entity, TransferStatus.class);
+            transferStatus = response.getBody();
+        }
+        catch (RestClientResponseException | ResourceAccessException e) {
+            BasicLogger.log(e.getMessage());
+        }
+
+        return transferStatus;
     }
 
     public void setAuthToken(String token) {

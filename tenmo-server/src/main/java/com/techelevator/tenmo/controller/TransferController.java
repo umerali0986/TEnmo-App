@@ -29,4 +29,10 @@ public class TransferController {
     public List<Transfer> getTransfersByAccountId(@PathVariable("id") int accountId){
         return jdbcTransferDao.getTransfersByAccountId(accountId);
     }
+
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(path = "/transfer/{id}", method = RequestMethod.GET)
+    public Transfer getTransferById(@PathVariable("id") int transferId){
+        return jdbcTransferDao.getTransferById(transferId);
+    }
 }

@@ -1,6 +1,8 @@
 package com.techelevator.tenmo.services;
 
 
+import com.techelevator.tenmo.model.Transfer;
+import com.techelevator.tenmo.model.TransferType;
 import com.techelevator.tenmo.model.User;
 import com.techelevator.tenmo.model.UserCredentials;
 
@@ -10,6 +12,7 @@ import java.util.Scanner;
 public class ConsoleService {
 
     private final Scanner scanner = new Scanner(System.in);
+    private final TransferService transferService = new TransferService();
     private final String blueColorCode = "\u001B[34m";
     private final String resetColorCode = "\u001B[0m";
 
@@ -103,5 +106,17 @@ public class ConsoleService {
         for (User user : users){
             System.out.println("Username: " + user.getUsername() + ", User ID: " + user.getId());
         }
+    }
+
+    public void printTransferDetails(Transfer transfer){
+        System.out.println("-----------------------------------------");
+        System.out.println("Transfer Details");
+        System.out.println("-----------------------------------------");
+        System.out.println("ID: " + transfer.getTransfer_id());
+        System.out.println("From: " + transfer.getAccount_from());
+        System.out.println("To: " + transfer.getAccount_to());
+        System.out.println("Type: " + transferService.getTransferTypeById(transfer.getTransfer_type_id()).getTransferTypeDesc());
+        System.out.println("Status: " + transferService.getTransferStatusById(transfer.getTransfer_status_id()).getTransferStatusDesc());
+        System.out.println("Amount: $" + transfer.getAmount());
     }
 }

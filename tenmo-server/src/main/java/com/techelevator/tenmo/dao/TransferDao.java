@@ -9,6 +9,8 @@ public interface TransferDao {
 
     Transfer createReceipt(Transfer transfer);
 
-    Transfer getTransferById(int id);
+    Transfer getTransferById(int transferId);
     List<Transfer> getTransfersByAccountId(int accountId);
+
+
 }

@@ -81,7 +81,7 @@ public class App {
             if (menuSelection == 1) {
                 viewCurrentBalance();
             } else if (menuSelection == 2) {
-                viewTransferHistory();
+                transferMenu();
             } else if (menuSelection == 3) {
                 viewPendingRequests();
             } else if (menuSelection == 4) {
@@ -98,10 +98,87 @@ public class App {
         }
     }
 
-	private void viewCurrentBalance() {
+    private void transferMenu() {
+
+
+        boolean running = true;
+
+        while(running) {
+            System.out.println();
+            System.out.println("1: View all transactions");
+            System.out.println("2: View transaction by id ");
+            System.out.println("0: Return to Main Menu ");
+            System.out.println();
+            System.out.print("Please enter an option: ");
+
+            String userInput = scanner.nextLine();
+            int selection = 0;
+            try {
+                selection = Integer.parseInt(userInput);
+
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input, please enter valid option ");
+                continue;
+            }
+
+            if(selection == 1){
+                viewTransferHistory();
+            }
+            else if(selection == 2){
+               viewTransferDetails();
+            }
+            else if (selection == 0) {
+                running = false;
+                break;
+            }
+            else{
+                System.out.println("Invalid input, please enter valid option ");
+            }
+
+        }
+
+
+
+    }
+
+    private void viewCurrentBalance() {
         System.out.println(accountService.getBalance());
 	}
 
+    private void viewTransferDetails(){
+
+        boolean running = true;
+        while(running) {
+            System.out.println();
+            System.out.print("Please enter transfer Id to see the details :");
+
+            String userInput = scanner.nextLine();
+            int transferId = 0;
+            try {
+                transferId = Integer.parseInt(userInput);
+
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input, please enter valid option ");
+                continue;
+            }
+
+            Transfer transferDetails = transferService.getTransferById(transferId);
+
+            if(transferDetails == null) {
+                System.out.println("Transfer with that Id does not exist.");
+            }
+            else if(transferDetails.getAccount_from() != accountService.getAccountByUserId(currentUser.getUser().getId()).getAccount_id() &&
+                    transferDetails.getAccount_to() != accountService.getAccountByUserId(currentUser.getUser().getId()).getAccount_id()){
+                System.out.println("Transfer with that Id does not exist.");
+
+            }
+            else{
+
+                consoleService.printTransferDetails(transferDetails);
+            }
+                break;
+        }
+        }
 	private void viewTransferHistory() {
 		// TODO Auto-generated method stub
         Account account = accountService.getAccountByUserId(currentUser.getUser().getId());
