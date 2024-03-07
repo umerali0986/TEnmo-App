@@ -1,5 +1,6 @@
 package com.techelevator.tenmo.services;
 
+import com.techelevator.tenmo.Dto.UpdateAccountDto;
 import com.techelevator.tenmo.model.Account;
 import com.techelevator.util.BasicLogger;
 import org.springframework.http.HttpEntity;
@@ -54,6 +55,21 @@ public class AccountService {
 
         } return account;
 
+    }
+
+    public void updateAccountBalance(UpdateAccountDto updateAccountDto){
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(authToken);
+        HttpEntity<UpdateAccountDto> entity =new HttpEntity<>(updateAccountDto, headers);
+
+        try{
+            ResponseEntity<UpdateAccountDto> response = restTemplate.exchange(API_BASE_URL + "/account/updateBalance", HttpMethod.PUT, entity, UpdateAccountDto.class);
+
+        } catch (RestClientResponseException | ResourceAccessException e) {
+
+            BasicLogger.log(e.getMessage());
+
+        }
     }
 
     public void setAuthToken(String token) {

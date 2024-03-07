@@ -16,4 +16,6 @@ public interface UserDao {
     User createUser(RegisterUserDto user);
 
     List<User> getOtherUsers(String currentUserName);
+
+    User getUserByAccountId(int accountID);
 }

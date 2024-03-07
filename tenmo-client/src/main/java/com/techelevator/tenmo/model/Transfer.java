@@ -10,6 +10,8 @@ public class Transfer {
     private int account_to;
     private BigDecimal amount;
 
+    private int transfer_id;
+
 
     public int getTransfer_type_id() {
         return transfer_type_id;
@@ -49,6 +51,10 @@ public class Transfer {
 
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
+    }
+
+    public int getTransfer_id() {
+        return transfer_id;
     }
 
     @Override

@@ -36,4 +36,10 @@ public class UserController {
         return user;
     }
 
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(path = "/account/{id}/user", method = RequestMethod.GET)
+    public User getUserByAccountId(@PathVariable("id") int accountId){
+        return jdbcUserDao.getUserByAccountId(accountId);
+    }
+
 }

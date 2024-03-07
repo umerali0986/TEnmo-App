@@ -1,12 +1,13 @@
 package com.techelevator.tenmo.controller;
 
 import com.techelevator.tenmo.dao.JdbcTransferDao;
+import com.techelevator.tenmo.model.Account;
 import com.techelevator.tenmo.model.Transfer;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
+import java.util.List;
 
 @RestController
 public class TransferController {
@@ -21,5 +22,11 @@ public class TransferController {
     @RequestMapping(path = "/send", method = RequestMethod.POST)
     public Transfer createReceipt(@RequestBody Transfer transfer){
         return jdbcTransferDao.createReceipt(transfer);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(path = "/account/{id}/transfer/history", method = RequestMethod.GET)
+    public List<Transfer> getTransfersByAccountId(@PathVariable("id") int accountId){
+        return jdbcTransferDao.getTransfersByAccountId(accountId);
     }
 }
