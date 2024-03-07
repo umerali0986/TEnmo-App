@@ -1,9 +1,6 @@
 package com.techelevator.tenmo;
 
-import com.techelevator.tenmo.model.AuthenticatedUser;
-import com.techelevator.tenmo.model.Transfer;
-import com.techelevator.tenmo.model.User;
-import com.techelevator.tenmo.model.UserCredentials;
+import com.techelevator.tenmo.model.*;
 import com.techelevator.tenmo.services.*;
 
 import java.math.BigDecimal;
@@ -174,21 +171,18 @@ public class App {
                 System.out.println("Insufficient funds");
             }
 
+            Account senderAccount = accountService.getAccountByUserId(currentUser.getUser().getId());
+            Account receiverAccount = accountService.getAccountByUserId(recipientId);
             Transfer transfer = new Transfer();
 
 
             transfer.setAmount(transferAmount);
-            // TODO- Get account_id from account table where a user_id is Equal(recipientId and currentSenderId) pass that to set account_from and account_to
-
-            transfer.setAccount_from(currentUser.getUser().getId());
-            transfer.setAccount_to(recipientId);
-
+            transfer.setAccount_from(senderAccount.getAccount_id());
+            transfer.setAccount_to(receiverAccount.getAccount_id());
             transfer.setTransfer_type_id(2);
             transfer.setTransfer_status_id(2);
-
-            //TODO- send a http request with a body "transfer"
-
             System.out.println(transferService.createReceipt(transfer));
+            //TODO - create updateAccountDao, create updateBalance(in AccountService)
         }
 
 	}

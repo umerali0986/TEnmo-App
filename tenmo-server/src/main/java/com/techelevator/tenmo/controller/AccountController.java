@@ -1,12 +1,12 @@
 package com.techelevator.tenmo.controller;
 
+import com.techelevator.tenmo.Dto.UpdateAccountDto;
 import com.techelevator.tenmo.dao.JdbcAccountDao;
 import com.techelevator.tenmo.dao.JdbcUserDao;
+import com.techelevator.tenmo.model.Account;
 import com.techelevator.tenmo.model.User;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.security.Principal;
@@ -22,7 +22,6 @@ public class AccountController {
         this.jdbcUserDao = jdbcUserDao;
     }
 
-    //TODO finish this
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(path = "/balance", method = RequestMethod.GET)
     public BigDecimal getAccountBalance(Principal principal) {
@@ -31,6 +30,23 @@ public class AccountController {
         BigDecimal balance = jdbcAccountDao.getAccountBalance(user.getId());
 
         return balance;
+
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(path = "/user/{id}/account", method = RequestMethod.GET)
+    public Account getAccountByUserId(@PathVariable int id) {
+
+        Account account = jdbcAccountDao.getAccountByUserId(id);
+        return  account;
+
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(path = "/account/updateBalance", method = RequestMethod.PUT)
+    public void updateFunds(@RequestBody UpdateAccountDto updateAccountDto) {
+
+        jdbcAccountDao.updateFunds(updateAccountDto.getAmount(), updateAccountDto.getAccount(), updateAccountDto.isWithdraw());
 
     }
 
