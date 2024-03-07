@@ -10,6 +10,8 @@ import java.util.Scanner;
 public class ConsoleService {
 
     private final Scanner scanner = new Scanner(System.in);
+    private final String blueColorCode = "\u001B[34m";
+    private final String resetColorCode = "\u001B[0m";
 
     public int promptForMenuSelection(String prompt) {
         int menuSelection;
@@ -23,9 +25,17 @@ public class ConsoleService {
     }
 
     public void printGreeting() {
-        System.out.println("*********************");
-        System.out.println("* Welcome to TEnmo! *");
-        System.out.println("*********************");
+        System.out.println(blueColorCode + " /$$$$$$$$  /$$$$$$$$  ");
+        System.out.println("|__  $$__/ | $$_____/  ");
+        System.out.println("   | $$    | $$        /$$$$$$$   /$$$$$$/$$$$    /$$$$$$ ");
+        System.out.println("   | $$    | $$$$$    | $$__  $$ | $$_  $$_  $$  /$$__  $$");
+        System.out.println("   | $$    | $$__/    | $$  \\ $$ | $$ \\ $$ \\ $$ | $$  \\ $$");
+        System.out.println("   | $$    | $$       | $$  | $$ | $$ | $$ | $$ | $$  | $$");
+        System.out.println("   | $$    | $$$$$$$$ | $$  | $$ | $$ | $$ | $$ |  $$$$$$/");
+        System.out.println("   |__/    |________/ |__/  |__/ |__/ |__/ |__/  \\______/ " + resetColorCode);
+        System.out.println("***********************************************************");
+        System.out.println("***                  Welcome to TEnmo!!!                ***");
+        System.out.println("***********************************************************");
     }
 
     public void printLoginMenu() {
