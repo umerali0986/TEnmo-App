@@ -16,6 +16,7 @@ public class JdbcAccountDao implements AccountDao{
     private final JdbcTemplate jdbcTemplate;
 
     //constructors
+
     public  JdbcAccountDao (JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
@@ -102,6 +103,31 @@ public class JdbcAccountDao implements AccountDao{
         return numberOfRowUpdated;
 
     }
+
+    @Override
+    public BigDecimal getBalanceByAccountId(int id){
+        BigDecimal balance = new BigDecimal(0);
+        String sql = "SELECT balance FROM account WHERE account_id = ?;";
+
+        try {
+
+            SqlRowSet results = jdbcTemplate.queryForRowSet(sql, id);
+
+            if (results.next()) {
+
+                balance = new BigDecimal(results.getString("balance"));
+
+            }
+
+
+        } catch (CannotGetJdbcConnectionException e) {
+
+            throw new DaoException("Unable to connect to database or server.");
+
+        }
+        return balance;
+    }
+
     public Account mapRowToAccount(SqlRowSet result) {
         Account account = new Account();
         account.setAccount_id(result.getInt("account_id"));

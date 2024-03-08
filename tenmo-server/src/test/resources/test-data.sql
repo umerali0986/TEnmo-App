@@ -55,6 +55,9 @@ CREATE TABLE transfer (
 	account_from int NOT NULL,
 	account_to int NOT NULL,
 	amount decimal(13, 2) NOT NULL,
+	current_account_to_balance decimal(13,2) NOT NULL,
+	current_account_from_balance decimal(13,2) NOT NULL,
+    transaction_date timestamp NOT NULL,
 	CONSTRAINT PK_transfer PRIMARY KEY (transfer_id),
 	CONSTRAINT FK_transfer_account_from FOREIGN KEY (account_from) REFERENCES account (account_id),
 	CONSTRAINT FK_transfer_account_to FOREIGN KEY (account_to) REFERENCES account (account_id),
@@ -79,9 +82,9 @@ INSERT INTO account (account_id,user_id,balance) VALUES ('2001','1001','1000.00'
 INSERT INTO account (account_id,user_id,balance)  VALUES ('2002','1002','1000.00'); -- 2002
 INSERT INTO account (account_id,user_id,balance)  VALUES ('2003','1003','1000.00');
 
-INSERT INTO transfer (transfer_id, transfer_type_id, transfer_status_id, account_from, account_to, amount) VALUES ('3005', '2', '1', '2001','2002', '1000.00');
-INSERT INTO transfer (transfer_id, transfer_type_id, transfer_status_id, account_from, account_to, amount) VALUES ('3002', '1', '2', '2002','2003', '1000.00');
-INSERT INTO transfer (transfer_id, transfer_type_id, transfer_status_id, account_from, account_to, amount) VALUES ('3003', '1', '3', '2003','2001', '1000.00');
+INSERT INTO transfer (transfer_id, transfer_type_id, transfer_status_id, account_from, account_to, amount, current_account_to_balance, current_account_from_balance, transaction_date) VALUES ('3005', '2', '1', '2001','2002', '1000.00','1000.00','1000.00',CURRENT_TIMESTAMP);
+INSERT INTO transfer (transfer_id, transfer_type_id, transfer_status_id, account_from, account_to, amount, current_account_to_balance, current_account_from_balance, transaction_date) VALUES ('3002', '1', '2', '2002','2003', '1000.00','1000.00','1000.00',CURRENT_TIMESTAMP);
+INSERT INTO transfer (transfer_id, transfer_type_id, transfer_status_id, account_from, account_to, amount, current_account_to_balance, current_account_from_balance, transaction_date) VALUES ('3003', '1', '3', '2003','2001', '1000.00','1000.00','1000.00',CURRENT_TIMESTAMP);
 
 
 

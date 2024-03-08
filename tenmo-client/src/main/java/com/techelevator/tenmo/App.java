@@ -355,15 +355,17 @@ public class App {
         //TODO include $ in color coding, add "-" to withdraws, add alignment padding based on length of negative amount value
         for (Transfer transfer : transferHistory){
             String amount;
+            //this is the sender
             if(transfer.getAccount_from() == accountService.getAccountByUserId(currentUser.getUser().getId()).getAccount_id()) {
-                amount = redColor + "" + transfer.getAmount() + resetColor;
-                displayTransferHistoryTableRow(transfer.getTransfer_id(), "To:", userService.getUserByAccountId(transfer.getAccount_to()).getUsername(), amount);
-                // System.out.println(transfer.getTransfer_id() + " Receiver: " + userService.getUserByAccountId(transfer.getAccount_to()).getUsername() + ", Amount: $" + transfer.getAmount());
+//                amount = redColor + "" + transfer.getAmount() + resetColor;
+//                displayTransferHistoryTableRow(transfer.getTransfer_id(), "To:", userService.getUserByAccountId(transfer.getAccount_to()).getUsername(), amount);
+                 System.out.println(transfer.getTransfer_id() + " Receiver: " + userService.getUserByAccountId(transfer.getAccount_to()).getUsername() + ", Amount: $" + transfer.getAmount() + ", balance: $" + transfer.getCurrentAccountFromBalance() + " " + transfer.getTransactionDate());
             }
+            //This is the receiver
             else {
-                amount = "" + transfer.getAmount();
-                displayTransferHistoryTableRow(transfer.getTransfer_id(), "From:", userService.getUserByAccountId(transfer.getAccount_from()).getUsername(), amount);
-                //System.out.println(transfer.getTransfer_id() + " Sender: " + userService.getUserByAccountId(transfer.getAccount_from()).getUsername() + ", Amount: $" + transfer.getAmount());
+                //amount = "" + transfer.getAmount();
+                //displayTransferHistoryTableRow(transfer.getTransfer_id(), "From:", userService.getUserByAccountId(transfer.getAccount_from()).getUsername(), amount);
+                System.out.println(transfer.getTransfer_id() + " Sender: " + userService.getUserByAccountId(transfer.getAccount_from()).getUsername() + ", Amount: $" + transfer.getAmount() + ", balance: $" + transfer.getCurrentAccountToBalance() + transfer.getTransactionDate());
             }
         }
 	}

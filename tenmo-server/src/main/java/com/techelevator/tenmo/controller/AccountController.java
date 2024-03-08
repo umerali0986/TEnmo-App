@@ -50,4 +50,11 @@ public class AccountController {
 
     }
 
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(path = "/balance/account/{id}", method = RequestMethod.GET)
+    public BigDecimal getBalanceByAccountId(@PathVariable("id") int id){
+        BigDecimal accountBalance = jdbcAccountDao.getBalanceByAccountId(id);
+        return accountBalance;
+    }
+
 }

@@ -26,7 +26,7 @@ public class JdbcTransferDaoTests extends BaseDaoTests {
     @Before
     public void setup() {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-        sut = new JdbcTransferDao(jdbcTemplate);
+        sut = new JdbcTransferDao(jdbcTemplate, new JdbcAccountDao(jdbcTemplate));
     }
 
 

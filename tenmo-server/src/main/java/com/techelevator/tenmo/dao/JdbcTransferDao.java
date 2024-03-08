@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,9 +16,13 @@ import java.util.List;
 public class JdbcTransferDao implements TransferDao{
 
     private final JdbcTemplate jdbcTemplate;
+    private final JdbcAccountDao jdbcAccountDao;
 
-    public JdbcTransferDao(JdbcTemplate jdbcTemplate) {
+
+    public JdbcTransferDao(JdbcTemplate jdbcTemplate, JdbcAccountDao jdbcAccountDao) {
         this.jdbcTemplate = jdbcTemplate;
+        this.jdbcAccountDao = jdbcAccountDao;
+
     }
 
     public Transfer getTransferById(int id){
@@ -58,14 +63,17 @@ public class JdbcTransferDao implements TransferDao{
     @Override
     public Transfer createReceipt(Transfer transfer) {
         Transfer newTransfer = null;
+        BigDecimal senderCurrentBalance = jdbcAccountDao.getBalanceByAccountId(transfer.getAccount_from()).subtract(transfer.getAmount());
+        BigDecimal receiverCurrentBalance = jdbcAccountDao.getBalanceByAccountId(transfer.getAccount_to()).add(transfer.getAmount());
 
 
-        String sql = "INSERT INTO transfer (transfer_type_id, transfer_status_id, account_from, account_to, amount)" +
-                " VALUES (?,?,?,?,?) RETURNING transfer_id;";
+        String sql = "INSERT INTO transfer (transfer_type_id, transfer_status_id, account_from, account_to, amount, current_account_to_balance, current_account_from_balance, transaction_date)" +
+                " VALUES (?,?,?,?,?,?,?, CURRENT_TIMESTAMP) RETURNING transfer_id;";
 
         try{
             int newTransferId = jdbcTemplate.queryForObject(sql, int.class, transfer.getTransfer_type_id(),
-                    transfer.getTransfer_status_id(), transfer.getAccount_from(), transfer.getAccount_to(), transfer.getAmount());
+                    transfer.getTransfer_status_id(), transfer.getAccount_from(), transfer.getAccount_to(), transfer.getAmount(),
+                    receiverCurrentBalance, senderCurrentBalance);
             newTransfer = getTransferById(newTransferId);
         }
         catch (CannotGetJdbcConnectionException e){
@@ -115,7 +123,6 @@ public class JdbcTransferDao implements TransferDao{
 
 
     private Transfer mapRowToTransfer(SqlRowSet result) {
-//        transfer_type_id, transfer_status_id, account_from, account_to, amount
         Transfer transfer = new Transfer();
 
         transfer.setTransfer_id(result.getInt("transfer_id"));
@@ -124,6 +131,10 @@ public class JdbcTransferDao implements TransferDao{
         transfer.setAccount_from(result.getInt("account_from"));
         transfer.setAccount_to(result.getInt("account_to"));
         transfer.setAmount(result.getBigDecimal("amount"));
+        transfer.setCurrentAccountFromBalance(result.getBigDecimal("current_account_from_balance"));
+        transfer.setCurrentAccountToBalance(result.getBigDecimal("current_account_to_balance"));
+        transfer.setTransactionDate(result.getTimestamp("transaction_date"));
+
 
         return transfer;
     }

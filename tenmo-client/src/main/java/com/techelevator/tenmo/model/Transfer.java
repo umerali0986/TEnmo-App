@@ -1,6 +1,7 @@
 package com.techelevator.tenmo.model;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 
 public class Transfer {
 
@@ -9,6 +10,33 @@ public class Transfer {
     private int account_from;
     private int account_to;
     private BigDecimal amount;
+    private BigDecimal currentAccountToBalance;
+    private BigDecimal currentAccountFromBalance;
+    private Timestamp transactionDate;
+
+    public BigDecimal getCurrentAccountToBalance() {
+        return currentAccountToBalance;
+    }
+
+    public void setCurrentAccountToBalance(BigDecimal currentAccountToBalance) {
+        this.currentAccountToBalance = currentAccountToBalance;
+    }
+
+    public BigDecimal getCurrentAccountFromBalance() {
+        return currentAccountFromBalance;
+    }
+
+    public void setCurrentAccountFromBalance(BigDecimal currentAccountFromBalance) {
+        this.currentAccountFromBalance = currentAccountFromBalance;
+    }
+
+    public Timestamp getTransactionDate() {
+        return transactionDate;
+    }
+
+    public void setTransactionDate(Timestamp transactionDate) {
+        this.transactionDate = transactionDate;
+    }
 
     private int transfer_id;
 
