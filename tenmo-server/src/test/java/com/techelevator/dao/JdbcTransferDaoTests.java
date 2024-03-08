@@ -61,9 +61,8 @@ public class JdbcTransferDaoTests extends BaseDaoTests {
     public void getTransferByAccountId_should_return_correct_transfer(){
         List<Transfer> transfers = sut.getTransfersByAccountId(ACCOUNT_1.getAccount_id());
 
-        Assert.assertEquals("getTransferByAccountId() did not return the correct amount", 2, transfers.size());
+        Assert.assertEquals("getTransferByAccountId() did not return the correct amount", 1, transfers.size());
         assertTransferMatch(TRANSFER_1, transfers.get(0));
-        assertTransferMatch(TRANSFER_3, transfers.get(1));
     }
 
     @Test

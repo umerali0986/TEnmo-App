@@ -82,7 +82,7 @@ public class JdbcTransferDao implements TransferDao{
     @Override
     public List<Transfer> getTransfersByAccountId(int accountId){
         List<Transfer> transfers = new ArrayList<>();
-        String sql = "SELECT * FROM transfer WHERE account_from = ? OR account_to = ? ORDER BY transfer_id DESC;";
+        String sql = "SELECT * FROM transfer WHERE (account_from = ? OR account_to = ?) AND transfer_status_id != 3 ORDER BY transfer_id DESC;";
 
         try {
             SqlRowSet result = jdbcTemplate.queryForRowSet(sql, accountId, accountId);
