@@ -354,13 +354,12 @@ public class App {
         }
         }
 	private void viewTransferHistory() {
-		// TODO Auto-generated method stub
         Account account = accountService.getAccountByUserId(currentUser.getUser().getId());
         Transfer[] transferHistory = transferService.viewTransferHistory(account.getAccount_id());
         System.out.println();
         System.out.println("-------------------------------------------");
         System.out.println("Transaction History");
-        //TODO - Continue improving visual formatting, Add Balance, Add isPendingStatus
+        //TODO - Continue improving visual formatting, Add Balance, Add isPendingStatus, Add Timestamps
         System.out.println("ID     From/To       Amount");
         System.out.println("-------------------------------------------");
         System.out.println();
