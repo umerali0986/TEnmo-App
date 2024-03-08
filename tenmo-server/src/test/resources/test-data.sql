@@ -71,12 +71,18 @@ INSERT INTO transfer_status (transfer_status_desc) VALUES ('Rejected');
 INSERT INTO transfer_type (transfer_type_desc) VALUES ('Request');
 INSERT INTO transfer_type (transfer_type_desc) VALUES ('Send');
 
-INSERT INTO tenmo_user (username,password_hash,role) VALUES ('user1','user1','ROLE_USER'); -- 1001
-INSERT INTO tenmo_user (username,password_hash,role) VALUES ('user2','user2','ROLE_USER'); -- 1002
-INSERT INTO tenmo_user (username,password_hash,role) VALUES ('user3','user3','ROLE_USER');
+INSERT INTO tenmo_user (username,password_hash,role) VALUES ('user4','user1','ROLE_USER'); -- 1001
+INSERT INTO tenmo_user (username,password_hash,role) VALUES ('user5','user2','ROLE_USER'); -- 1002
+INSERT INTO tenmo_user (username,password_hash,role) VALUES ('user6','user3','ROLE_USER');
 
 INSERT INTO account (account_id,user_id,balance) VALUES ('2001','1001','1000.00'); -- 2001
 INSERT INTO account (account_id,user_id,balance)  VALUES ('2002','1002','1000.00'); -- 2002
 INSERT INTO account (account_id,user_id,balance)  VALUES ('2003','1003','1000.00');
+
+INSERT INTO transfer (transfer_id, transfer_type_id, transfer_status_id, account_from, account_to, amount) VALUES ('3005', '2', '1', '2001','2002', '1000.00');
+INSERT INTO transfer (transfer_id, transfer_type_id, transfer_status_id, account_from, account_to, amount) VALUES ('3002', '1', '2', '2002','2003', '1000.00');
+INSERT INTO transfer (transfer_id, transfer_type_id, transfer_status_id, account_from, account_to, amount) VALUES ('3003', '1', '3', '2003','2001', '1000.00');
+
+
 
 COMMIT TRANSACTION;

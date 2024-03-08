@@ -96,10 +96,12 @@ public class JdbcTransferDao implements TransferDao{
     }
 
     @Override
-    public void updateTransactionStatus(int statusId, int transferId){
+    public int updateTransactionStatus(int statusId, int transferId){
+        int numberOfRowsUpdated = 0;
+
         String sql = "UPDATE transfer SET transfer_status_id = ? WHERE transfer_id = ?;";
         try{
-            jdbcTemplate.update(sql, statusId, transferId);
+            numberOfRowsUpdated = jdbcTemplate.update(sql, statusId, transferId);
         }
         catch (CannotGetJdbcConnectionException e){
             throw new DaoException("Unable to connect to server or database");
@@ -107,6 +109,7 @@ public class JdbcTransferDao implements TransferDao{
         catch (DataIntegrityViolationException e){
             throw new DaoException("Data integrity violation");
         }
+        return numberOfRowsUpdated;
     }
 
 

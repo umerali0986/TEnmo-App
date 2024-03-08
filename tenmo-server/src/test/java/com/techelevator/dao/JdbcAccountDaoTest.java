@@ -14,9 +14,9 @@ import java.math.BigDecimal;
 
 public class JdbcAccountDaoTest extends BaseDaoTests {
 
-    protected static final User USER_1 = new User(1001, "user1", "user1", "USER");
-    protected static final User USER_2 = new User(1002, "user2", "user2", "USER");
-    private static final User USER_3 = new User(1003, "user3", "user3", "USER");
+    protected static final User USER_1 = new User(1001, "user4", "user1", "USER");
+    protected static final User USER_2 = new User(1002, "user5", "user2", "USER");
+    private static final User USER_3 = new User(1003, "user6", "user3", "USER");
     protected static final Account ACCOUNT_1 = new Account(2001, 1001, new BigDecimal(1000.00));
     protected static final Account ACCOUNT_2 = new Account(2002, 1002, new BigDecimal(1000.00));
     protected static final Account ACCOUNT_3 = new Account(2003, 1003, new BigDecimal(1000.00));
