@@ -13,4 +13,5 @@ public interface AccountDao {
 
     Account getAccountByUserId(int id);
 
+    int updateFunds(BigDecimal amount, Account account, boolean isWithdraw);
 }

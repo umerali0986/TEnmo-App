@@ -10,6 +10,15 @@ public class UpdateAccountDto {
     private BigDecimal amount;
     private boolean withdraw;
 
+    public UpdateAccountDto(Account account, BigDecimal amount, boolean withdraw) {
+        this.account = account;
+        this.amount = amount;
+        this.withdraw = withdraw;
+    }
+
+    public UpdateAccountDto() {
+    }
+
     public Account getAccount() {
         return account;
     }

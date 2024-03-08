@@ -70,8 +70,10 @@ public class JdbcAccountDao implements AccountDao{
         return account;
     }
 
-    public void updateFunds(BigDecimal amount, Account account, boolean isWithdraw) {
+    @Override
+    public int updateFunds(BigDecimal amount, Account account, boolean isWithdraw) {
 
+        int numberOfRowUpdated = 0;
         String sql = "UPDATE account SET balance = ? WHERE account_id = ?;";
         BigDecimal newBalance;
 
@@ -85,7 +87,7 @@ public class JdbcAccountDao implements AccountDao{
 
         } try {
 
-            jdbcTemplate.update(sql, newBalance, account.getAccount_id());
+            numberOfRowUpdated = jdbcTemplate.update(sql, newBalance, account.getAccount_id());
 
         } catch (CannotGetJdbcConnectionException e) {
 
@@ -96,6 +98,8 @@ public class JdbcAccountDao implements AccountDao{
             throw new DaoException("Data Integrity Violation.");
 
         }
+
+        return numberOfRowUpdated;
 
     }
     public Account mapRowToAccount(SqlRowSet result) {
