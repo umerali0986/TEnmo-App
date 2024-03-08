@@ -130,6 +130,19 @@ public class TransferService {
         return pendingTransfers;
     }
 
+    public void updateTransactionStatus(int statusId, int transferId){
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(authToken);
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+
+        try{
+            restTemplate.exchange(API_BASE_URL + "/transfer/" + transferId + "/status/update/" + statusId, HttpMethod.PUT, entity, Void.class);
+        }
+        catch (RestClientResponseException | ResourceAccessException e) {
+            BasicLogger.log(e.getMessage());
+        }
+    }
+
     public void setAuthToken(String token) {
         authToken = token;
     }

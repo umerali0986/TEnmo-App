@@ -96,7 +96,8 @@ public class App {
             } else if (menuSelection == 2) {
                 transferMenu();
             } else if (menuSelection == 3) {
-                viewPendingRequests();
+                //viewPendingRequests();
+                pendingMenu();
             } else if (menuSelection == 4) {
                 sendBucks();
                 scanner.nextLine();
@@ -108,6 +109,160 @@ public class App {
                 System.out.println("Invalid Selection");
             }
             consoleService.pause();
+        }
+    }
+
+    private void pendingMenu() {
+        boolean running = true;
+
+        while(running) {
+            System.out.println();
+            System.out.println("-------------------------------------------");
+            System.out.println("Pending Transactions Menu");
+            System.out.println("-------------------------------------------");
+            System.out.println();
+            System.out.println("1: View all pending transactions");
+            System.out.println("2: Accept or decline pending transaction by Id");
+            System.out.println("0: Return to Main Menu ");
+            System.out.println();
+            System.out.print("Please enter an option: ");
+
+            String userInput = scanner.nextLine();
+            int selection = 0;
+            try {
+                selection = Integer.parseInt(userInput);
+
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input, please enter valid option ");
+                continue;
+            }
+
+            if(selection == 1){
+                viewPendingRequests();
+            }
+            else if(selection == 2){
+                displayPendingTransferById();
+
+            }
+            else if (selection == 0) {
+                running = false;
+            }
+            else{
+                System.out.println("Invalid input, please enter valid option ");
+            }
+
+        }
+    }
+
+    private void displayPendingTransferById(){
+        boolean running = true;
+
+        while(running) {
+            System.out.println();
+            System.out.print("Please enter pending transaction Id: ");
+
+            String userInput = scanner.nextLine();
+
+            int pendingTransactionId = 0;
+            try {
+                pendingTransactionId = Integer.parseInt(userInput);
+
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input, please enter valid option ");
+                continue;
+            }
+            Transfer transferDetails = transferService.getTransferById(pendingTransactionId);
+
+            if(transferDetails == null) {
+                System.out.println("Transfer with that Id does not exist.");
+            }
+            else if(transferDetails.getAccount_from() != accountService.getAccountByUserId(currentUser.getUser().getId()).getAccount_id() &&
+                    transferDetails.getAccount_to() != accountService.getAccountByUserId(currentUser.getUser().getId()).getAccount_id()){
+                System.out.println("Transfer with that Id does not exist.");
+
+            }
+            else {
+                consoleService.printTransferDetails(transferDetails);
+                handleAcceptOrDeclineTransaction(pendingTransactionId);
+                break;
+            }
+        }
+    }
+
+    private void handleAcceptOrDeclineTransaction(int pendingTransactionId){
+        //TODO once updated transaction can not be changed again
+        boolean running = true;
+        int approvedStatusCode = 2;
+        int declinedStatusCode = 3;
+        while (running){
+            System.out.print("Would you like to accept transaction (Y/N)? ");
+            String userInput = scanner.nextLine();
+
+            if(userInput.equalsIgnoreCase("Y")){
+                transferService.updateTransactionStatus(approvedStatusCode, pendingTransactionId);
+                //TODO update balance
+                //TODO Begin here tomorrow
+                //TODO add backend transfer amount by transfer id
+                //Begin code import
+                if(transferAmount.compareTo(new BigDecimal (0.0)) == 0.0){
+                    break;
+                }
+
+                if(transferAmount.compareTo(new BigDecimal(0.01)) == -1){
+                    System.out.println("Please enter an amount greater than $0.01 ");
+                    continue;
+                }
+
+                if(transferAmount.scale() > 2){
+                    System.out.println("Transfer amount must not contain more than 2 decimal places.");
+                    continue;
+                }
+
+                if(transferAmount.compareTo(accountService.getBalance()) == 1){
+                    System.out.println("Insufficient funds");
+                }
+                else {
+                    Account senderAccount = accountService.getAccountByUserId(currentUser.getUser().getId());
+                    Account receiverAccount = accountService.getAccountByUserId(recipientId);
+                    //recipientId
+                    Transfer transfer = new Transfer();
+
+
+                    transfer.setAmount(transferAmount);
+                    transfer.setAccount_from(senderAccount.getAccount_id());
+                    transfer.setAccount_to(receiverAccount.getAccount_id());
+                    transfer.setTransfer_type_id(2);
+                    transfer.setTransfer_status_id(2);
+                    transferService.createReceipt(transfer);
+
+                    UpdateAccountDto updateSenderAccount = new UpdateAccountDto();
+                    UpdateAccountDto updateReceiverAccount = new UpdateAccountDto();
+
+                    updateSenderAccount.setAccount(senderAccount);
+                    updateSenderAccount.setAmount(transferAmount);
+                    updateSenderAccount.setWithdaw(true);
+
+                    updateReceiverAccount.setAccount(receiverAccount);
+                    updateReceiverAccount.setAmount(transferAmount);
+                    updateReceiverAccount.setWithdaw(false);
+
+                    System.out.println("Transfer Successful");
+                    accountService.updateAccountBalance(updateSenderAccount);
+                    accountService.updateAccountBalance(updateReceiverAccount);
+                    System.out.println("Sender: " + currentUser.getUser().getUsername() + ", Receiver: " + userService.getUserById(recipientId).getUsername() + ", Amount: $" + transferAmount);
+                }
+                break;
+            }
+                //End code import
+                break;
+            }
+            else if(userInput.equalsIgnoreCase("N")){
+                transferService.updateTransactionStatus(declinedStatusCode, pendingTransactionId);
+                break;
+            }
+            else {
+                System.out.println("Invalid input");
+            }
         }
     }
 
@@ -153,9 +308,6 @@ public class App {
             }
 
         }
-
-
-
     }
 
     private void viewCurrentBalance() {
