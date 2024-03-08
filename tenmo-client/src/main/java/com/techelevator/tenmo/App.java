@@ -156,12 +156,14 @@ public class App {
 
     private void displayPendingTransferById(){
         boolean running = true;
+        int rejectedStatusCode = 3;
+        int approvedStatusCode = 2;
 
         while(running) {
             System.out.println();
             System.out.print("Please enter pending transaction Id: ");
-
             String userInput = scanner.nextLine();
+
 
             int pendingTransactionId = 0;
             try {
@@ -180,12 +182,14 @@ public class App {
                     transferDetails.getAccount_to() != accountService.getAccountByUserId(currentUser.getUser().getId()).getAccount_id()){
                 System.out.println("Transfer with that Id does not exist.");
 
-            }
-            else {
+            } else if (transferDetails.getTransfer_status_id() == approvedStatusCode || transferDetails.getTransfer_status_id() == rejectedStatusCode) {
+                System.out.println("Transfer request has already been resolved.");
+
+            } else {
                 consoleService.printTransferDetails(transferDetails);
                 handleAcceptOrDeclineTransaction(pendingTransactionId);
-                break;
             }
+            break;
         }
     }
 
@@ -195,74 +199,54 @@ public class App {
         int approvedStatusCode = 2;
         int declinedStatusCode = 3;
         while (running){
+            Transfer approvedTransfer = transferService.getTransferById(pendingTransactionId);
+
+            if(userService.getUserByAccountId(approvedTransfer.getAccount_to()).getId() == currentUser.getUser().getId()){
+                System.out.println();
+                System.out.println("Waiting approval from recipient party.");
+                break;
+            }
+
+            System.out.println();
             System.out.print("Would you like to accept transaction (Y/N)? ");
             String userInput = scanner.nextLine();
 
-            if(userInput.equalsIgnoreCase("Y")){
+            if(userInput.equalsIgnoreCase("Y")) {
                 transferService.updateTransactionStatus(approvedStatusCode, pendingTransactionId);
                 //TODO update balance
                 //TODO Begin here tomorrow
                 //TODO add backend transfer amount by transfer id
-                //Begin code import
-                if(transferAmount.compareTo(new BigDecimal (0.0)) == 0.0){
+
+
+                Account senderAccount = accountService.getAccountByUserId(userService.getUserByAccountId(approvedTransfer.getAccount_from()).getId());
+                Account receiverAccount = accountService.getAccountByUserId(userService.getUserByAccountId(approvedTransfer.getAccount_to()).getId());
+
+                if(senderAccount.getBalance().compareTo(approvedTransfer.getAmount()) == -1){
+                    transferService.updateTransactionStatus(declinedStatusCode, pendingTransactionId);
+                    System.out.println("Insufficient funds, Request rejected.");
                     break;
                 }
+                UpdateAccountDto updateSenderAccount = new UpdateAccountDto();
+                UpdateAccountDto updateReceiverAccount = new UpdateAccountDto();
 
-                if(transferAmount.compareTo(new BigDecimal(0.01)) == -1){
-                    System.out.println("Please enter an amount greater than $0.01 ");
-                    continue;
-                }
+                updateSenderAccount.setAccount(senderAccount);
+                updateSenderAccount.setAmount(approvedTransfer.getAmount());
+                updateSenderAccount.setWithdaw(true);
 
-                if(transferAmount.scale() > 2){
-                    System.out.println("Transfer amount must not contain more than 2 decimal places.");
-                    continue;
-                }
+                updateReceiverAccount.setAccount(receiverAccount);
+                updateReceiverAccount.setAmount(approvedTransfer.getAmount());
+                updateReceiverAccount.setWithdaw(false);
 
-                if(transferAmount.compareTo(accountService.getBalance()) == 1){
-                    System.out.println("Insufficient funds");
-                }
-                else {
-                    Account senderAccount = accountService.getAccountByUserId(currentUser.getUser().getId());
-                    Account receiverAccount = accountService.getAccountByUserId(recipientId);
-                    //recipientId
-                    Transfer transfer = new Transfer();
+                System.out.println("Transfer Successful");
+                accountService.updateAccountBalance(updateSenderAccount);
+                accountService.updateAccountBalance(updateReceiverAccount);
+//                System.out.println("Sender: " + currentUser.getUser().getUsername() + ", Receiver: " + userService.getUserById(approvedTransfer.getAccount_to()).getUsername() + ", Amount: $" + approvedTransfer.getAmount());
 
-
-                    transfer.setAmount(transferAmount);
-                    transfer.setAccount_from(senderAccount.getAccount_id());
-                    transfer.setAccount_to(receiverAccount.getAccount_id());
-                    transfer.setTransfer_type_id(2);
-                    transfer.setTransfer_status_id(2);
-                    transferService.createReceipt(transfer);
-
-                    UpdateAccountDto updateSenderAccount = new UpdateAccountDto();
-                    UpdateAccountDto updateReceiverAccount = new UpdateAccountDto();
-
-                    updateSenderAccount.setAccount(senderAccount);
-                    updateSenderAccount.setAmount(transferAmount);
-                    updateSenderAccount.setWithdaw(true);
-
-                    updateReceiverAccount.setAccount(receiverAccount);
-                    updateReceiverAccount.setAmount(transferAmount);
-                    updateReceiverAccount.setWithdaw(false);
-
-                    System.out.println("Transfer Successful");
-                    accountService.updateAccountBalance(updateSenderAccount);
-                    accountService.updateAccountBalance(updateReceiverAccount);
-                    System.out.println("Sender: " + currentUser.getUser().getUsername() + ", Receiver: " + userService.getUserById(recipientId).getUsername() + ", Amount: $" + transferAmount);
-                }
-                break;
             }
-                //End code import
-                break;
-            }
-            else if(userInput.equalsIgnoreCase("N")){
+            else if (userInput.equalsIgnoreCase("N")) {
                 transferService.updateTransactionStatus(declinedStatusCode, pendingTransactionId);
-                break;
             }
-            else {
-                System.out.println("Invalid input");
-            }
+            break;
         }
     }
 
@@ -298,6 +282,7 @@ public class App {
             }
             else if(selection == 2){
                viewTransferDetails();
+               scanner.nextLine();
             }
             else if (selection == 0) {
                 running = false;

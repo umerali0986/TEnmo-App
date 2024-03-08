@@ -2,6 +2,7 @@ package com.techelevator.dao;
 
 import com.techelevator.tenmo.dao.JdbcUserDao;
 import com.techelevator.tenmo.exception.DaoException;
+import com.techelevator.tenmo.model.Account;
 import com.techelevator.tenmo.model.RegisterUserDto;
 import com.techelevator.tenmo.model.User;
 import org.junit.Assert;
@@ -11,12 +12,15 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class JdbcUserDaoTests extends BaseDaoTests {
     protected static final User USER_1 = new User(1001, "user1", "user1", "USER");
     protected static final User USER_2 = new User(1002, "user2", "user2", "USER");
     private static final User USER_3 = new User(1003, "user3", "user3", "USER");
+
+    private static final Account ACCOUNT_1 = new Account(2001,1001,new BigDecimal(1000));
 
     private JdbcUserDao sut;
 
@@ -104,5 +108,29 @@ public class JdbcUserDaoTests extends BaseDaoTests {
 
         User retrievedUser = sut.getUserByUsername(createdUser.getUsername());
         Assert.assertEquals(retrievedUser, createdUser);
+    }
+
+    @Test
+    public void getOtherUsers_return_other_users(){
+        List<User> otherUsers = sut.getOtherUsers(USER_1.getUsername());
+
+        Assert.assertEquals("getOtherUsers() return incorrect number of users",2,otherUsers.size());
+
+        assertUserMatch(USER_2, otherUsers.get(0));
+        assertUserMatch(USER_3, otherUsers.get(1));
+    }
+
+    @Test
+    public void getUserByAccountId_return_correct_user_by_accountId(){
+        User user = sut.getUserByAccountId(ACCOUNT_1.getAccount_id());
+
+        Assert.assertNotNull("getUserByAccountId() returned null user",user);
+
+        assertUserMatch(USER_1,user);
+    }
+
+    private void assertUserMatch(User expected, User actual){
+        Assert.assertEquals("User Id doesn't match",expected.getId(), actual.getId());
+        Assert.assertEquals("User name doesn't match",expected.getUsername(), actual.getUsername());
     }
 }

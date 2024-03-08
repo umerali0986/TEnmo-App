@@ -11,6 +11,13 @@ public class Account {
     //constructor
     public Account() {
     }
+
+    public Account(int account_id, int userId, BigDecimal balance) {
+        this.account_id = account_id;
+        this.userId = userId;
+        this.balance = balance;
+    }
+
     //getters & setters
     public int getAccount_id() {
         return account_id;
