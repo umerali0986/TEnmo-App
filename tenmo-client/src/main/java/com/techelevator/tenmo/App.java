@@ -5,6 +5,7 @@ import com.techelevator.tenmo.model.*;
 import com.techelevator.tenmo.services.*;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -257,9 +258,9 @@ public class App {
 
         while(running) {
             System.out.println();
-            System.out.println("-------------------------------------------");
+            System.out.println("---------------------------------------------");
             System.out.println("Transactions Menu");
-            System.out.println("-------------------------------------------");
+            System.out.println("---------------------------------------------");
             System.out.println();
             System.out.println("1: View all transactions");
             System.out.println("2: View transaction by id ");
@@ -339,23 +340,30 @@ public class App {
         }
         }
 	private void viewTransferHistory() {
+        String redColor = "\u001B[31m";
+        String resetColor = "\u001B[0m";
         Account account = accountService.getAccountByUserId(currentUser.getUser().getId());
         Transfer[] transferHistory = transferService.viewTransferHistory(account.getAccount_id());
         System.out.println();
-        System.out.println("-------------------------------------------");
+        System.out.println("---------------------------------------------");
         System.out.println("Transaction History");
         //TODO - Continue improving visual formatting, Add Balance, Add isPendingStatus, Add Timestamps
-        System.out.println("ID     From/To       Amount");
-        System.out.println("-------------------------------------------");
+        System.out.println("ID          From/To                   Amount");
+        System.out.println("---------------------------------------------");
         System.out.println();
 
-
+        //TODO include $ in color coding, add "-" to withdraws, add alignment padding based on length of negative amount value
         for (Transfer transfer : transferHistory){
-            if(transfer.getAccount_from() == accountService.getAccountByUserId(currentUser.getUser().getId()).getAccount_id()){
-                System.out.println(transfer.getTransfer_id() + " Receiver: " + userService.getUserByAccountId(transfer.getAccount_to()).getUsername() + ", Amount: $" + transfer.getAmount());
+            String amount;
+            if(transfer.getAccount_from() == accountService.getAccountByUserId(currentUser.getUser().getId()).getAccount_id()) {
+                amount = redColor + "" + transfer.getAmount() + resetColor;
+                displayTransferHistoryTableRow(transfer.getTransfer_id(), "To:", userService.getUserByAccountId(transfer.getAccount_to()).getUsername(), amount);
+                // System.out.println(transfer.getTransfer_id() + " Receiver: " + userService.getUserByAccountId(transfer.getAccount_to()).getUsername() + ", Amount: $" + transfer.getAmount());
             }
             else {
-                System.out.println(transfer.getTransfer_id() + " Sender: " + userService.getUserByAccountId(transfer.getAccount_from()).getUsername() + ", Amount: $" + transfer.getAmount());
+                amount = "" + transfer.getAmount();
+                displayTransferHistoryTableRow(transfer.getTransfer_id(), "From:", userService.getUserByAccountId(transfer.getAccount_from()).getUsername(), amount);
+                //System.out.println(transfer.getTransfer_id() + " Sender: " + userService.getUserByAccountId(transfer.getAccount_from()).getUsername() + ", Amount: $" + transfer.getAmount());
             }
         }
 	}
@@ -479,7 +487,7 @@ public class App {
                 System.out.println("Transfer Successful");
                 accountService.updateAccountBalance(updateSenderAccount);
                 accountService.updateAccountBalance(updateReceiverAccount);
-                System.out.println("Sender: " + currentUser.getUser().getUsername() + ", Receiver: " + userService.getUserById(recipientId).getUsername() + ", Amount: $" + transferAmount);
+                System.out.println("From: " + currentUser.getUser().getUsername() + ", To: " + userService.getUserById(recipientId).getUsername() + ", Amount: $" + transferAmount);
             }
             break;
         }
@@ -584,5 +592,10 @@ public class App {
         }
 
 	}
+
+    //Used to format printed table of Transfer History
+    private static void displayTransferHistoryTableRow(int transferId, String toFrom, String name, String amount) {
+        System.out.printf("%-12d%-6s%-17s%10s%n", transferId, toFrom, name, "$" + amount);
+    }
 
 }
