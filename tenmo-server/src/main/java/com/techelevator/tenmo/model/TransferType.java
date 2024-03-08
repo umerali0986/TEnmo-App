@@ -5,6 +5,18 @@ public class TransferType {
     private int transferTypeId;
     private String transferTypeDesc;
 
+    // Constructors
+
+    public TransferType() {
+
+    }
+
+    public TransferType(int transferTypeId, String transferTypeDesc) {
+        this.transferTypeId = transferTypeId;
+        this.transferTypeDesc = transferTypeDesc;
+    }
+
+    // getters and setters
     public int getTransferTypeId() {
         return transferTypeId;
     }

@@ -121,12 +121,34 @@ public class JdbcUserDaoTests extends BaseDaoTests {
     }
 
     @Test
+    public void getOtherUsers_given_invalid_username_return_allUsers(){
+
+        String invalidUsername = "QJFHDKJASHUISA897";
+
+        List<User> otherUsers = sut.getOtherUsers(invalidUsername);
+
+        Assert.assertEquals("getOtherUsers() return incorrect number of users",3,otherUsers.size());
+    }
+
+    // TODO- fix the issue
+    @Test
     public void getUserByAccountId_return_correct_user_by_accountId(){
         User user = sut.getUserByAccountId(ACCOUNT_1.getAccount_id());
 
         Assert.assertNotNull("getUserByAccountId() returned null user",user);
 
         assertUserMatch(USER_1,user);
+    }
+
+    @Test
+    public void getUserByAccountId_given_invalid_accountId_return_null(){
+
+        int invalidAccountId = 100;
+
+        User user = sut.getUserByAccountId(invalidAccountId);
+
+        Assert.assertNull("getUserByAccountId() returned not null user",user);
+
     }
 
     private void assertUserMatch(User expected, User actual){

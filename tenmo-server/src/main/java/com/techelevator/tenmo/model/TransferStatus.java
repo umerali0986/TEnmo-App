@@ -5,6 +5,18 @@ public class TransferStatus {
     private int transferStatusId;
     private String transferStatusDesc;
 
+    // Constructors
+
+
+    public TransferStatus(int transferStatusId, String transferStatusDesc) {
+        this.transferStatusId = transferStatusId;
+        this.transferStatusDesc = transferStatusDesc;
+    }
+
+    public TransferStatus() {
+    }
+
+    // getters and setters
     public int getTransferStatusId() {
         return transferStatusId;
     }
