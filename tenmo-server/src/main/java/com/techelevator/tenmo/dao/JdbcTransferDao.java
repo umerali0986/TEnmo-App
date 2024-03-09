@@ -44,7 +44,7 @@ public class JdbcTransferDao implements TransferDao{
     public List<Transfer> getPendingTransferByAccountId(int accountId, int statusId) {
 
         List<Transfer> pendingTransfers = new ArrayList<>();
-        String sql = "SELECT * FROM transfer WHERE (account_from = ? OR account_to = ?) AND transfer_status_id = ?;";
+        String sql = "SELECT * FROM transfer WHERE (account_from = ? OR account_to = ?) AND transfer_status_id = ? ORDER BY transfer_id DESC;";
 
         try {
             SqlRowSet result = jdbcTemplate.queryForRowSet(sql, accountId, accountId, statusId);
