@@ -150,7 +150,7 @@ public class ConsoleService {
                 //System.out.println(transfer.getTransfer_id() + " To: " + userService.getUserByAccountId(transfer.getAccount_to()).getUsername() + ", Amount: $" + transfer.getAmount() + ((transfer.getTransfer_status_id() != 1 ? ", balance: $" + transfer.getCurrentAccountFromBalance() : "")) + ", Date = " + transfer.getTransactionDate());
             } else {
                 String balance = (transfer.getTransfer_status_id() != 1 ? "$" + transfer.getCurrentAccountToBalance() : "");
-                displayTransferHistoryTableRow(transfer.getTransfer_id(), "From:", userService.getUserByAccountId(transfer.getAccount_to()).getUsername(), false, transfer.getAmount(), balance, transfer.getTransactionDate());
+                displayTransferHistoryTableRow(transfer.getTransfer_id(), "From:", userService.getUserByAccountId(transfer.getAccount_from()).getUsername(), false, transfer.getAmount(), balance, transfer.getTransactionDate());
                 //System.out.println(transfer.getTransfer_id() + " From: " + userService.getUserByAccountId(transfer.getAccount_from()).getUsername() + ", Amount: $" + transfer.getAmount() + ((transfer.getTransfer_status_id() != 1 ? ", balance: $" + transfer.getCurrentAccountToBalance() : "")) + ", Date = " + transfer.getTransactionDate());
             }
         }

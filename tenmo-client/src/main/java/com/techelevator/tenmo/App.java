@@ -204,6 +204,8 @@ public class App {
             if(userService.getUserByAccountId(approvedTransfer.getAccount_to()).getId() == currentUser.getUser().getId()){
                 System.out.println();
                 System.out.println("Waiting approval from recipient party.");
+                System.out.println();
+                consoleService.pause();
                 break;
             }
 
@@ -222,6 +224,8 @@ public class App {
                 if(senderAccount.getBalance().compareTo(approvedTransfer.getAmount()) == -1){
                     transferService.updateTransactionStatus(declinedStatusCode, pendingTransactionId);
                     System.out.println("Insufficient funds, Request rejected.");
+                    System.out.println();
+                    consoleService.pause();
                     break;
                 }
                 consoleService.updateAccountBalance(approvedTransfer.getAmount(), receiverAccount.getUserId(), accountService, currentUser, userService);
@@ -340,16 +344,17 @@ public class App {
         Account account = accountService.getAccountByUserId(currentUser.getUser().getId());
         Transfer[] transferHistory = transferService.viewTransferHistory(account.getAccount_id());
         System.out.println();
-        System.out.println("---------------------------------------------");
+        System.out.println("-----------------------------------------------------------------------------------------------");
         System.out.println("Transaction History");
         //TODO - Continue improving visual formatting, Add Balance, Add isPendingStatus, Add Timestamps
-        System.out.println("ID          From/To                   Amount");
-        System.out.println("---------------------------------------------");
+        System.out.println("ID              From/To                      Amount         Balance         Time Of Transaction");
+        System.out.println("-----------------------------------------------------------------------------------------------");
         System.out.println();
 
         //TODO include $ in color coding, add "-" to withdraws, add alignment padding based on length of negative amount value
 
         consoleService.printReceipt(transferHistory, accountService, userService,currentUser);
+        consoleService.pause();
 
 //        for (Transfer transfer : transferHistory){
 //            String amount;
@@ -383,6 +388,7 @@ public class App {
 
 
         consoleService.printReceipt(pendingTransfers, accountService, userService,currentUser);
+        consoleService.pause();
 
 //        for (Transfer transfer : pendingTransfers){
 //            if(transfer.getAccount_from() == accountService.getAccountByUserId(currentUser.getUser().getId()).getAccount_id()){
@@ -477,7 +483,7 @@ public class App {
 //                transfer.setTransfer_status_id(2);
 //                transferService.createReceipt(transfer);
 
-               BigDecimal transferAmount = consoleService.promptUserToInsertTransferAmount(accountService,currentUser,transferService,recipientId, userService, true);
+               consoleService.promptUserToInsertTransferAmount(accountService,currentUser,transferService,recipientId, userService, true);
 
 //               updateAccountBalance(transferAmount, recipientId);
 //                Account senderAccount = accountService.getAccountByUserId(currentUser.getUser().getId());
