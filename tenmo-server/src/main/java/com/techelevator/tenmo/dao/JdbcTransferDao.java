@@ -66,7 +66,7 @@ public class JdbcTransferDao implements TransferDao{
         BigDecimal senderCurrentBalance = jdbcAccountDao.getBalanceByAccountId(transfer.getAccount_from()).subtract(transfer.getAmount());
         BigDecimal receiverCurrentBalance = jdbcAccountDao.getBalanceByAccountId(transfer.getAccount_to()).add(transfer.getAmount());
 
-
+//TODO undo if we break everything
         String sql = "INSERT INTO transfer (transfer_type_id, transfer_status_id, account_from, account_to, amount, current_account_to_balance, current_account_from_balance, transaction_date)" +
                 " VALUES (?,?,?,?,?,?,?, CURRENT_TIMESTAMP) RETURNING transfer_id;";
 

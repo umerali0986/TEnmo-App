@@ -621,10 +621,10 @@ public class App {
 
 	}
 
-    //Used to format printed table of Transfer History
-    private static void displayTransferHistoryTableRow(int transferId, String toFrom, String name, String colorCode, String amount) {
-        System.out.printf("%-16d%-6s%-20s%1s%10s%n", transferId, toFrom, name, "$" + amount);
-    }
-//    3012 From: devin, Amount: $100.00, balance: $900.00, Date = 2024-03-09 09:05:22.639
+//    //Used to format printed table of Transfer History
+//    private static void displayTransferHistoryTableRow(int transferId, String toFrom, String name, String colorCode, String amount) {
+//        System.out.printf("%-16d%-6s%-20s%1s%10s%n", transferId, toFrom, name, "$" + amount);
+//    }
+////    3012 From: devin, Amount: $100.00, balance: $900.00, Date = 2024-03-09 09:05:22.639
 
 }
