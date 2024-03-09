@@ -19,7 +19,6 @@ public class App {
     private final UserService userService = new UserService();
     private final TransferService transferService = new TransferService();
 
-    // TODO- delete scanner after implementation
     private final Scanner scanner = new Scanner(System.in);
 
     private AuthenticatedUser currentUser;
@@ -195,7 +194,7 @@ public class App {
     }
 
     private void handleAcceptOrDeclineTransaction(int pendingTransactionId){
-        //TODO once updated transaction can not be changed again
+
         boolean running = true;
         int approvedStatusCode = 2;
         int declinedStatusCode = 3;
@@ -214,9 +213,7 @@ public class App {
 
             if(userInput.equalsIgnoreCase("Y")) {
                 transferService.updateTransactionStatus(approvedStatusCode, pendingTransactionId);
-                //TODO update balance
-                //TODO Begin here tomorrow
-                //TODO add backend transfer amount by transfer id
+
 
 
                 Account senderAccount = accountService.getAccountByUserId(userService.getUserByAccountId(approvedTransfer.getAccount_from()).getId());
@@ -372,7 +369,6 @@ public class App {
 	}
 
 	private void viewPendingRequests() {
-        // TODO- make sure the pending transfer requests are in correct order when printing it.
         int pendingStatusCode = 1;
         Account account = accountService.getAccountByUserId(currentUser.getUser().getId());
         Transfer[] pendingTransfers = transferService.getPendingTransfersByAccountId(account.getAccount_id(), pendingStatusCode);
@@ -399,7 +395,7 @@ public class App {
 	}
 
 	private void sendBucks() {
-		// TODO- move the logics around
+
         consoleService.printOtherUsers(userService.getOtherUsers());
         boolean running = true;
         int recipientId = 0;
@@ -531,7 +527,6 @@ public class App {
 //    }
 
 	private void requestBucks() {
-		// TODO stole logic from Send method, simplify into 1 method
         consoleService.printOtherUsers(userService.getOtherUsers());
         boolean running = true;
         int recipientId = 0;

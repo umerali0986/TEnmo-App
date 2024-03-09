@@ -75,8 +75,6 @@ public class TransferService {
     }
 
     public TransferType getTransferTypeById(int transferTypeId){
-
-        //TODO- get rid of headers
         TransferType transferType = null;
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(authToken);
@@ -95,7 +93,7 @@ public class TransferService {
 
     public TransferStatus getTransferStatusById(int transferStatusId){
 
-        //TODO- get rid of headers
+
         TransferStatus transferStatus = null;
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(authToken);

@@ -140,7 +140,7 @@ public class ConsoleService {
 
 
     public void printReceipt(Transfer[] pendingTransfers, AccountService accountService, UserService userService, AuthenticatedUser currentUser) {
-        //TODO- add formating to it
+
         String greenColorCode = "\u001B[0m";
         String resetColorCode = "\u001B[32m";
         for (Transfer transfer : pendingTransfers) {
