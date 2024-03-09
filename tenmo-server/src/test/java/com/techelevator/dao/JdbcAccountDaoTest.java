@@ -52,6 +52,16 @@ public class JdbcAccountDaoTest extends BaseDaoTests {
         Assert.assertEquals(1, numberOfRowUpdated);
     }
 
+    @Test
+    public void getBalanceByAccountId_given_valid_id_return_balance(){
+        BigDecimal balance = sut.getBalanceByAccountId(ACCOUNT_1.getAccount_id());
+
+        Assert.assertNotNull("getBalanceByAccountId() returned null balance", balance);
+
+        Assert.assertEquals("Account balance doesn't match",0, ACCOUNT_1.getBalance().compareTo(balance));
+
+    }
+
     private void assertAccountMatch(Account expected, Account actual){
         Assert.assertEquals("Account Id doesn't match",expected.getAccount_id(), actual.getAccount_id());
         Assert.assertEquals("Account balance doesn't match",0, expected.getBalance().compareTo(actual.getBalance()));
