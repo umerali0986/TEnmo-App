@@ -5,6 +5,9 @@ import com.techelevator.tenmo.Dto.UpdateAccountDto;
 import com.techelevator.tenmo.model.*;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Currency;
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -143,11 +146,11 @@ public class ConsoleService {
         for (Transfer transfer : pendingTransfers) {
             if (transfer.getAccount_from() == accountService.getAccountByUserId(currentUser.getUser().getId()).getAccount_id()) {
                 String balance = (transfer.getTransfer_status_id() != 1 ? "$" + transfer.getCurrentAccountFromBalance() : "");
-                displayTransferHistoryTableRow(transfer.getTransfer_id(), "To:", userService.getUserByAccountId(transfer.getAccount_to()).getUsername(), true, transfer.getAmount(), balance) ;
+                displayTransferHistoryTableRow(transfer.getTransfer_id(), "To:", userService.getUserByAccountId(transfer.getAccount_to()).getUsername(), true, transfer.getAmount(), balance, transfer.getTransactionDate()) ;
                 //System.out.println(transfer.getTransfer_id() + " To: " + userService.getUserByAccountId(transfer.getAccount_to()).getUsername() + ", Amount: $" + transfer.getAmount() + ((transfer.getTransfer_status_id() != 1 ? ", balance: $" + transfer.getCurrentAccountFromBalance() : "")) + ", Date = " + transfer.getTransactionDate());
             } else {
                 String balance = (transfer.getTransfer_status_id() != 1 ? "$" + transfer.getCurrentAccountToBalance() : "");
-                displayTransferHistoryTableRow(transfer.getTransfer_id(), "From:", userService.getUserByAccountId(transfer.getAccount_to()).getUsername(), false, transfer.getAmount(), balance);
+                displayTransferHistoryTableRow(transfer.getTransfer_id(), "From:", userService.getUserByAccountId(transfer.getAccount_to()).getUsername(), false, transfer.getAmount(), balance, transfer.getTransactionDate());
                 //System.out.println(transfer.getTransfer_id() + " From: " + userService.getUserByAccountId(transfer.getAccount_from()).getUsername() + ", Amount: $" + transfer.getAmount() + ((transfer.getTransfer_status_id() != 1 ? ", balance: $" + transfer.getCurrentAccountToBalance() : "")) + ", Date = " + transfer.getTransactionDate());
             }
         }
@@ -281,16 +284,19 @@ public class ConsoleService {
     }
 
     //Used to format printed table of Transfer History
-    private static void displayTransferHistoryTableRow(int transferId, String toFrom, String name, boolean isSending, BigDecimal amount, String balance) {
+    private static void displayTransferHistoryTableRow(int transferId, String toFrom, String name, boolean isSending, BigDecimal amount, String balance, Timestamp time) {
         String resetColorCode = "\u001B[0m";
         String greenColorCode = "\u001B[32m";
         System.out.printf("%-16d%-6s%-20s", transferId, toFrom, name);
+        LocalDateTime convertedTimeStamp = time.toLocalDateTime();
+        SimpleDateFormat format = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss");
+        String formattingTimeStamp = format.format(Timestamp.valueOf(convertedTimeStamp));
         if (!isSending) {
             System.out.print(greenColorCode);
         }
         System.out.printf("%10s", (isSending ? "" : "+") + "$" + amount);
         System.out.print(resetColorCode);
-        System.out.printf("%15s%n", (balance.equals("") ? "Pending" : balance));
+        System.out.printf("%15s%28s%n", (balance.equals("") ? "Pending" : balance), formattingTimeStamp);
     }
 //    3012 From: devin, Amount: $100.00, balance: $900.00, Date = 2024-03-09 09:05:22.639
 
