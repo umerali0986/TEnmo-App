@@ -43,10 +43,10 @@ public class AccountController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @RequestMapping(path = "/account/updateBalance", method = RequestMethod.PUT)
-    public void updateFunds(@RequestBody UpdateAccountDto updateAccountDto) {
+    @RequestMapping(path = "/account/updateBalance/transfer/{transferId}", method = RequestMethod.PUT)
+    public void updateFunds(@RequestBody UpdateAccountDto updateAccountDto, @PathVariable int transferId) {
 
-        jdbcAccountDao.updateFunds(updateAccountDto.getAmount(), updateAccountDto.getAccount(), updateAccountDto.isWithdraw());
+        jdbcAccountDao.updateFunds(updateAccountDto.getAmount(), updateAccountDto.getAccount(), updateAccountDto.isWithdraw(), transferId);
 
     }
 

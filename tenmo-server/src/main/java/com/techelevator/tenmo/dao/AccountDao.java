@@ -13,7 +13,7 @@ public interface AccountDao {
 
     Account getAccountByUserId(int id);
 
-    int updateFunds(BigDecimal amount, Account account, boolean isWithdraw);
+    int updateFunds(BigDecimal amount, Account account, boolean isWithdraw, int transferId);
 
     BigDecimal getBalanceByAccountId(int id);
 }

@@ -147,11 +147,9 @@ public class ConsoleService {
             if (transfer.getAccount_from() == accountService.getAccountByUserId(currentUser.getUser().getId()).getAccount_id()) {
                 String balance = (transfer.getTransfer_status_id() != 1 ? "$" + transfer.getCurrentAccountFromBalance() : "");
                 displayTransferHistoryTableRow(transfer.getTransfer_id(), "To:", userService.getUserByAccountId(transfer.getAccount_to()).getUsername(), true, transfer.getAmount(), balance, transfer.getTransactionDate()) ;
-                //System.out.println(transfer.getTransfer_id() + " To: " + userService.getUserByAccountId(transfer.getAccount_to()).getUsername() + ", Amount: $" + transfer.getAmount() + ((transfer.getTransfer_status_id() != 1 ? ", balance: $" + transfer.getCurrentAccountFromBalance() : "")) + ", Date = " + transfer.getTransactionDate());
             } else {
                 String balance = (transfer.getTransfer_status_id() != 1 ? "$" + transfer.getCurrentAccountToBalance() : "");
                 displayTransferHistoryTableRow(transfer.getTransfer_id(), "From:", userService.getUserByAccountId(transfer.getAccount_from()).getUsername(), false, transfer.getAmount(), balance, transfer.getTransactionDate());
-                //System.out.println(transfer.getTransfer_id() + " From: " + userService.getUserByAccountId(transfer.getAccount_from()).getUsername() + ", Amount: $" + transfer.getAmount() + ((transfer.getTransfer_status_id() != 1 ? ", balance: $" + transfer.getCurrentAccountToBalance() : "")) + ", Date = " + transfer.getTransactionDate());
             }
         }
 
@@ -243,8 +241,10 @@ public class ConsoleService {
                     transfer.setAccount_to(receiverAccount.getAccount_id());
                     transfer.setTransfer_type_id(sendingTypeCode);
                     transfer.setTransfer_status_id(approvedStatusCode);
-                    transferServices.createReceipt(transfer);
-                    updateAccountBalance(transferAmount, recipientId, accountService, currentUser, userService);
+                    Transfer createdTransfer = transferServices.createReceipt(transfer);
+                    int transferId = createdTransfer.getTransfer_id();
+                    //TODO - need to get transfer ID here
+                    updateAccountBalance(transferAmount, recipientId, accountService, currentUser, userService, transferId);
                 } else {
                     transfer.setAccount_from(receiverAccount.getAccount_id());
                     transfer.setAccount_to(senderAccount.getAccount_id());
@@ -261,7 +261,7 @@ public class ConsoleService {
         return transferAmount;
     }
 
-    public void updateAccountBalance(BigDecimal transferAmount, int recipientId, AccountService accountService, AuthenticatedUser currentUser, UserService userService) {
+    public void updateAccountBalance(BigDecimal transferAmount, int recipientId, AccountService accountService, AuthenticatedUser currentUser, UserService userService, int transferId) {
 
         Account senderAccount = accountService.getAccountByUserId(currentUser.getUser().getId());
         Account receiverAccount = accountService.getAccountByUserId(recipientId);
@@ -278,8 +278,8 @@ public class ConsoleService {
         updateReceiverAccount.setWithdaw(false);
 
         System.out.println("Transfer Successful");
-        accountService.updateAccountBalance(updateSenderAccount);
-        accountService.updateAccountBalance(updateReceiverAccount);
+        accountService.updateAccountBalance(updateSenderAccount, transferId);
+        accountService.updateAccountBalance(updateReceiverAccount, transferId);
         System.out.println("From: " + currentUser.getUser().getUsername() + ", To: " + userService.getUserById(recipientId).getUsername() + ", Amount: $" + transferAmount);
     }
 
@@ -298,6 +298,6 @@ public class ConsoleService {
         System.out.print(resetColorCode);
         System.out.printf("%15s%28s%n", (balance.equals("") ? "Pending" : balance), formattingTimeStamp);
     }
-//    3012 From: devin, Amount: $100.00, balance: $900.00, Date = 2024-03-09 09:05:22.639
+
 
 }

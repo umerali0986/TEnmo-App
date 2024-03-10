@@ -16,14 +16,17 @@ import java.util.List;
 public class JdbcTransferDao implements TransferDao{
 
     private final JdbcTemplate jdbcTemplate;
-    private final JdbcAccountDao jdbcAccountDao;
-
+    private JdbcAccountDao jdbcAccountDao;
 
     public JdbcTransferDao(JdbcTemplate jdbcTemplate, JdbcAccountDao jdbcAccountDao) {
         this.jdbcTemplate = jdbcTemplate;
         this.jdbcAccountDao = jdbcAccountDao;
 
     }
+//    public  JdbcTransferDao(JdbcTemplate jdbcTemplate) {
+//        this.jdbcTemplate = jdbcTemplate;
+//    }
+
 
     public Transfer getTransferById(int id){
         Transfer transfer = null;
@@ -44,7 +47,7 @@ public class JdbcTransferDao implements TransferDao{
     public List<Transfer> getPendingTransferByAccountId(int accountId, int statusId) {
 
         List<Transfer> pendingTransfers = new ArrayList<>();
-        String sql = "SELECT * FROM transfer WHERE (account_from = ? OR account_to = ?) AND transfer_status_id = ? ORDER BY transfer_id DESC;";
+        String sql = "SELECT * FROM transfer WHERE (account_from = ? OR account_to = ?) AND transfer_status_id = ? ORDER BY transaction_date DESC;";
 
         try {
             SqlRowSet result = jdbcTemplate.queryForRowSet(sql, accountId, accountId, statusId);
@@ -65,15 +68,14 @@ public class JdbcTransferDao implements TransferDao{
         Transfer newTransfer = null;
         BigDecimal senderCurrentBalance = jdbcAccountDao.getBalanceByAccountId(transfer.getAccount_from()).subtract(transfer.getAmount());
         BigDecimal receiverCurrentBalance = jdbcAccountDao.getBalanceByAccountId(transfer.getAccount_to()).add(transfer.getAmount());
-
+// line 70 "current_account_to_balance, current_account_from_balance," line 71 "?,?,"
 //TODO fix minor Balance issue
-        String sql = "INSERT INTO transfer (transfer_type_id, transfer_status_id, account_from, account_to, amount, current_account_to_balance, current_account_from_balance, transaction_date)" +
-                " VALUES (?,?,?,?,?,?,?, CURRENT_TIMESTAMP) RETURNING transfer_id;";
-
+        String sql = "INSERT INTO transfer (transfer_type_id, transfer_status_id, account_from, account_to, amount, transaction_date)" +
+                " VALUES (?,?,?,?,?, CURRENT_TIMESTAMP) RETURNING transfer_id;";
+// line 80 receiverCurrentBalance, senderCurrentBalance
         try{
             int newTransferId = jdbcTemplate.queryForObject(sql, int.class, transfer.getTransfer_type_id(),
-                    transfer.getTransfer_status_id(), transfer.getAccount_from(), transfer.getAccount_to(), transfer.getAmount(),
-                    receiverCurrentBalance, senderCurrentBalance);
+                    transfer.getTransfer_status_id(), transfer.getAccount_from(), transfer.getAccount_to(), transfer.getAmount());
             newTransfer = getTransferById(newTransferId);
         }
         catch (CannotGetJdbcConnectionException e){
@@ -90,7 +92,7 @@ public class JdbcTransferDao implements TransferDao{
     @Override
     public List<Transfer> getTransfersByAccountId(int accountId){
         List<Transfer> transfers = new ArrayList<>();
-        String sql = "SELECT * FROM transfer WHERE (account_from = ? OR account_to = ?) AND transfer_status_id != 3 ORDER BY transfer_id DESC;";
+        String sql = "SELECT * FROM transfer WHERE (account_from = ? OR account_to = ?) AND transfer_status_id != 3 ORDER BY transaction_date DESC;";
 
         try {
             SqlRowSet result = jdbcTemplate.queryForRowSet(sql, accountId, accountId);
@@ -118,6 +120,48 @@ public class JdbcTransferDao implements TransferDao{
             throw new DaoException("Data integrity violation");
         }
         return numberOfRowsUpdated;
+    }
+
+    @Override
+    public int updateBalanceAtTimeOfTransaction(int transferId, boolean isWithdraw, BigDecimal newBalance) {
+
+        int numberOfRowUpdated = 0;
+        String sql;
+
+        if (isWithdraw) {
+            sql = "UPDATE transfer SET current_account_from_balance = ?, transaction_date = CURRENT_TIMESTAMP WHERE transfer_id = ?;";
+            try {
+
+                numberOfRowUpdated = jdbcTemplate.update(sql, newBalance, transferId);
+
+            } catch (CannotGetJdbcConnectionException e) {
+
+                throw new DaoException("Unable to connect to database or server.");
+
+            } catch (DataIntegrityViolationException e) {
+
+                throw new DaoException("Data Integrity Violation.");
+
+            }
+
+        }  else {
+            sql = "UPDATE transfer SET current_account_to_balance = ?, transaction_date = CURRENT_TIMESTAMP WHERE transfer_id = ?;";
+            try {
+
+                numberOfRowUpdated = jdbcTemplate.update(sql, newBalance, transferId);
+
+            } catch (CannotGetJdbcConnectionException e) {
+
+                throw new DaoException("Unable to connect to database or server.");
+
+            } catch (DataIntegrityViolationException e) {
+
+                throw new DaoException("Data Integrity Violation.");
+
+            }
+
+        } return numberOfRowUpdated;
+
     }
 
 

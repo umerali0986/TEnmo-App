@@ -2,6 +2,7 @@ package com.techelevator.tenmo.dao;
 
 import com.techelevator.tenmo.exception.DaoException;
 import com.techelevator.tenmo.model.Account;
+import com.techelevator.tenmo.model.Transfer;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -72,24 +73,30 @@ public class JdbcAccountDao implements AccountDao{
     }
 
     @Override
-    public int updateFunds(BigDecimal amount, Account account, boolean isWithdraw) {
-
+    public int updateFunds(BigDecimal amount, Account account, boolean isWithdraw, int transferId) {
+        JdbcAccountDao test = null;
+        JdbcTransferDao jdbcTransferDao = new JdbcTransferDao(jdbcTemplate, test);
         int numberOfRowUpdated = 0;
         String sql = "UPDATE account SET balance = ? WHERE account_id = ?;";
-        BigDecimal newBalance;
+        BigDecimal newBalance = new BigDecimal(0);
+
 
         if (isWithdraw) {
 
             newBalance = account.getBalance().subtract(amount);
+            jdbcTransferDao.updateBalanceAtTimeOfTransaction(transferId, isWithdraw, newBalance);
 
-        } else {
+//todo working here
+        } else  {
 
             newBalance = account.getBalance().add(amount);
+            jdbcTransferDao.updateBalanceAtTimeOfTransaction(transferId, isWithdraw, newBalance);
 
-        } try {
+        }
+        try {
+           numberOfRowUpdated = jdbcTemplate.update(sql, newBalance, account.getAccount_id());
 
-            numberOfRowUpdated = jdbcTemplate.update(sql, newBalance, account.getAccount_id());
-
+            System.out.println(numberOfRowUpdated);
         } catch (CannotGetJdbcConnectionException e) {
 
             throw new DaoException("Unable to connect to database or server.");
@@ -99,6 +106,12 @@ public class JdbcAccountDao implements AccountDao{
             throw new DaoException("Data Integrity Violation.");
 
         }
+
+//        if (isWithdraw) {
+//            jdbcTransferDao.updateBalanceAtTimeOfTransaction(transfer, isWithdraw, newBalance);
+//        } else {
+//            jdbcTransferDao.updateBalanceAtTimeOfTransaction(transfer, isWithdraw, newBalance);
+//        }
 
         return numberOfRowUpdated;
 

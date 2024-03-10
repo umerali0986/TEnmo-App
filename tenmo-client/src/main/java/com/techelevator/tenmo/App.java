@@ -228,22 +228,7 @@ public class App {
                     consoleService.pause();
                     break;
                 }
-                consoleService.updateAccountBalance(approvedTransfer.getAmount(), receiverAccount.getUserId(), accountService, currentUser, userService);
-//                UpdateAccountDto updateSenderAccount = new UpdateAccountDto();
-//                UpdateAccountDto updateReceiverAccount = new UpdateAccountDto();
-//
-//                updateSenderAccount.setAccount(senderAccount);
-//                updateSenderAccount.setAmount(approvedTransfer.getAmount());
-//                updateSenderAccount.setWithdaw(true);
-//
-//                updateReceiverAccount.setAccount(receiverAccount);
-//                updateReceiverAccount.setAmount(approvedTransfer.getAmount());
-//                updateReceiverAccount.setWithdaw(false);
-//
-//                System.out.println("Transfer Successful");
-//                accountService.updateAccountBalance(updateSenderAccount);
-//                accountService.updateAccountBalance(updateReceiverAccount);
-//                System.out.println("Sender: " + currentUser.getUser().getUsername() + ", Receiver: " + userService.getUserById(approvedTransfer.getAccount_to()).getUsername() + ", Amount: $" + approvedTransfer.getAmount());
+                consoleService.updateAccountBalance(approvedTransfer.getAmount(), receiverAccount.getUserId(), accountService, currentUser, userService, pendingTransactionId);
 
             }
             else if (userInput.equalsIgnoreCase("N")) {
@@ -298,7 +283,6 @@ public class App {
         }
     }
 
-    // move this method's logic to console service class, and create printCurrentBalance() method
     private void viewCurrentBalance() {
 
        consoleService.printCurrentBalance(accountService);
@@ -346,31 +330,13 @@ public class App {
         System.out.println();
         System.out.println("-----------------------------------------------------------------------------------------------");
         System.out.println("Transaction History");
-        //TODO - Continue improving visual formatting, Add Balance, Add isPendingStatus, Add Timestamps
         System.out.println("ID              From/To                      Amount         Balance         Time Of Transaction");
         System.out.println("-----------------------------------------------------------------------------------------------");
         System.out.println();
 
-        //TODO include $ in color coding, add "-" to withdraws, add alignment padding based on length of negative amount value
-
         consoleService.printReceipt(transferHistory, accountService, userService,currentUser);
         consoleService.pause();
 
-//        for (Transfer transfer : transferHistory){
-//            String amount;
-//            //this is the sender
-//            if(transfer.getAccount_from() == accountService.getAccountByUserId(currentUser.getUser().getId()).getAccount_id()) {
-////                amount = redColor + "" + transfer.getAmount() + resetColor;
-////                displayTransferHistoryTableRow(transfer.getTransfer_id(), "To:", userService.getUserByAccountId(transfer.getAccount_to()).getUsername(), amount);
-//                 System.out.println(transfer.getTransfer_id() + " Receiver: " + userService.getUserByAccountId(transfer.getAccount_to()).getUsername() + ", Amount: $" + transfer.getAmount() + ", balance: $" + transfer.getCurrentAccountFromBalance() + " " + transfer.getTransactionDate());
-//            }
-//            //This is the receiver
-//            else {
-//                //amount = "" + transfer.getAmount();
-//                //displayTransferHistoryTableRow(transfer.getTransfer_id(), "From:", userService.getUserByAccountId(transfer.getAccount_from()).getUsername(), amount);
-//                System.out.println(transfer.getTransfer_id() + " Sender: " + userService.getUserByAccountId(transfer.getAccount_from()).getUsername() + ", Amount: $" + transfer.getAmount() + ", balance: $" + transfer.getCurrentAccountToBalance() + transfer.getTransactionDate());
-//            }
-//        }
 	}
 
 	private void viewPendingRequests() {
@@ -378,26 +344,15 @@ public class App {
         Account account = accountService.getAccountByUserId(currentUser.getUser().getId());
         Transfer[] pendingTransfers = transferService.getPendingTransfersByAccountId(account.getAccount_id(), pendingStatusCode);
         System.out.println();
-        System.out.println("-------------------------------------------");
+        System.out.println("-----------------------------------------------------------------------------------------------");
         System.out.println("Pending Transactions");
-        //TODO - Continue improving visual formatting, Add Balance, Add isPendingStatus
-        System.out.println("ID     From/To       Amount");
-        System.out.println("-------------------------------------------");
+        System.out.println("ID              From/To                      Amount         Balance         Time Of Transaction");
+        System.out.println("-----------------------------------------------------------------------------------------------");
         System.out.println();
-
-
 
         consoleService.printReceipt(pendingTransfers, accountService, userService,currentUser);
         consoleService.pause();
 
-//        for (Transfer transfer : pendingTransfers){
-//            if(transfer.getAccount_from() == accountService.getAccountByUserId(currentUser.getUser().getId()).getAccount_id()){
-//                System.out.println(transfer.getTransfer_id() + " To: " + userService.getUserByAccountId(transfer.getAccount_to()).getUsername() + ", Amount: $" + transfer.getAmount());
-//            }
-//            else {
-//                System.out.println(transfer.getTransfer_id() + " From: " + userService.getUserByAccountId(transfer.getAccount_from()).getUsername() + ", Amount: $" + transfer.getAmount());
-//            }
-//        }
 	}
 
 	private void sendBucks() {
@@ -408,224 +363,19 @@ public class App {
 
         recipientId = consoleService.promptUserToInsertRecipientId(userService,currentUser);
 
-//        while(running) {
-//            System.out.println();
-//            System.out.print("Please select id for recipient (Enter 0 to cancel): ");
-//            String userInput = scanner.nextLine();
-//
-//
-//            try {
-//                 recipientId = Integer.parseInt(userInput);
-//                 if(recipientId == 0){
-//                     running = false;
-//                     break;
-//                 }
-//
-//            } catch (NumberFormatException e) {
-//                System.out.println("Invalid input for recipient id, please enter valid id");
-//                continue;
-//            }
-//
-//            if(userService.getUserById(recipientId) == null){
-//                System.out.println("Recipient id is invalid");
-//                continue;
-//            }
-//            else if(currentUser.getUser().getId() == recipientId){
-//                System.out.println("You can't transfer money to your own account.");
-//                continue;
-//            }
-//
-//            break;
-//        }
-
-//        while(running) {
-//            System.out.println();
-//            System.out.print("Please enter the amount to send (Enter 0 to cancel): ");
-//
-//            BigDecimal transferAmount;
-//            try {
-//                 transferAmount = scanner.nextBigDecimal();
-//            }
-//            catch (InputMismatchException e){
-//                System.out.println("Input must be a valid currency amount.");
-//                scanner.nextLine();
-//                continue;
-//            }
-//
-//            if(transferAmount.compareTo(new BigDecimal (0.0)) == 0.0){
-//                break;
-//            }
-//
-//            if(transferAmount.compareTo(new BigDecimal(0.01)) == -1){
-//                System.out.println("Please enter an amount greater than $0.01 ");
-//                continue;
-//            }
-//
-//            if(transferAmount.scale() > 2){
-//                System.out.println("Transfer amount must not contain more than 2 decimal places.");
-//                continue;
-//            }
-//
-//            if(transferAmount.compareTo(accountService.getBalance()) == 1){
-//                System.out.println("Insufficient funds");
-//            }
-//            else {
-//                Account senderAccount = accountService.getAccountByUserId(currentUser.getUser().getId());
-//                Account receiverAccount = accountService.getAccountByUserId(recipientId);
-//                //recipientId
-//                Transfer transfer = new Transfer();
-//
-//
-//                transfer.setAmount(transferAmount);
-//                transfer.setAccount_from(senderAccount.getAccount_id());
-//                transfer.setAccount_to(receiverAccount.getAccount_id());
-//                transfer.setTransfer_type_id(2);
-//                transfer.setTransfer_status_id(2);
-//                transferService.createReceipt(transfer);
-
                consoleService.promptUserToInsertTransferAmount(accountService,currentUser,transferService,recipientId, userService, true);
 
-//               updateAccountBalance(transferAmount, recipientId);
-//                Account senderAccount = accountService.getAccountByUserId(currentUser.getUser().getId());
-//                Account receiverAccount = accountService.getAccountByUserId(recipientId);
-//
-//                UpdateAccountDto updateSenderAccount = new UpdateAccountDto();
-//                UpdateAccountDto updateReceiverAccount = new UpdateAccountDto();
-//
-//                updateSenderAccount.setAccount(senderAccount);
-//                updateSenderAccount.setAmount(transferAmount);
-//                updateSenderAccount.setWithdaw(true);
-//
-//                updateReceiverAccount.setAccount(receiverAccount);
-//                updateReceiverAccount.setAmount(transferAmount);
-//                updateReceiverAccount.setWithdaw(false);
-//
-//                System.out.println("Transfer Successful");
-//                accountService.updateAccountBalance(updateSenderAccount);
-//                accountService.updateAccountBalance(updateReceiverAccount);
-//                System.out.println("From: " + currentUser.getUser().getUsername() + ", To: " + userService.getUserById(recipientId).getUsername() + ", Amount: $" + transferAmount);
-           // }
-//            break;
-//        }
-
 	}
-
-//    public void updateAccountBalance(BigDecimal transferAmount, int recipientId){
-//
-//        Account senderAccount = accountService.getAccountByUserId(currentUser.getUser().getId());
-//        Account receiverAccount = accountService.getAccountByUserId(recipientId);
-//
-//        UpdateAccountDto updateSenderAccount = new UpdateAccountDto();
-//        UpdateAccountDto updateReceiverAccount = new UpdateAccountDto();
-//
-//        updateSenderAccount.setAccount(senderAccount);
-//        updateSenderAccount.setAmount(transferAmount);
-//        updateSenderAccount.setWithdaw(true);
-//
-//        updateReceiverAccount.setAccount(receiverAccount);
-//        updateReceiverAccount.setAmount(transferAmount);
-//        updateReceiverAccount.setWithdaw(false);
-//
-//        System.out.println("Transfer Successful");
-//        accountService.updateAccountBalance(updateSenderAccount);
-//        accountService.updateAccountBalance(updateReceiverAccount);
-//        System.out.println("From: " + currentUser.getUser().getUsername() + ", To: " + userService.getUserById(recipientId).getUsername() + ", Amount: $" + transferAmount);
-//    }
 
 	private void requestBucks() {
         consoleService.printOtherUsers(userService.getOtherUsers());
         boolean running = true;
         int recipientId = 0;
 
-        // create promptUserToInsertRecipientId() method in console service that return recipientId
-
       recipientId = consoleService.promptUserToInsertRecipientId(userService, currentUser);
 
-//        while(running) {
-//            System.out.println();
-//            System.out.print("Please select id for recipient (Enter 0 to cancel): ");
-//            String userInput = scanner.nextLine();
-//
-//
-//            try {
-//                recipientId = Integer.parseInt(userInput);
-//                if(recipientId == 0){
-//                    running = false;
-//                    break;
-//                }
-//
-//            } catch (NumberFormatException e) {
-//                System.out.println("Invalid input for recipient id, please enter valid id");
-//                continue;
-//            }
-//
-//            if(userService.getUserById(recipientId) == null){
-//                System.out.println("Recipient id is invalid");
-//                continue;
-//            }
-//            else if(currentUser.getUser().getId() == recipientId){
-//                System.out.println("You can't transfer money to your own account.");
-//                continue;
-//            }
-//
-//            break;
-//        }
-
-        // create promptUserToInsertTransferAmount() method in console service that return amount
-
         consoleService.promptUserToInsertTransferAmount(accountService, currentUser, transferService,recipientId, userService, false);
-//        while(running) {
-//            System.out.println();
-//            System.out.print("Please enter the amount to send (Enter 0 to cancel): ");
-//
-//            BigDecimal transferAmount;
-//            try {
-//                transferAmount = scanner.nextBigDecimal();
-//            } catch (InputMismatchException e) {
-//                System.out.println("Input must be a valid currency amount.");
-//                scanner.nextLine();
-//                continue;
-//            }
-//
-//            if (transferAmount.compareTo(new BigDecimal(0.0)) == 0.0) {
-//                break;
-//            }
-//
-//            if (transferAmount.compareTo(new BigDecimal(0.01)) == -1) {
-//                System.out.println("Please enter an amount greater than $0.01 ");
-//                continue;
-//            }
-//
-//            if (transferAmount.scale() > 2) {
-//                System.out.println("Transfer amount must not contain more than 2 decimal places.");
-//                continue;
-//            } else {
-//
-//
-//                Account senderAccount = accountService.getAccountByUserId(recipientId);
-//                Account receiverAccount = accountService.getAccountByUserId(currentUser.getUser().getId());
-//
-//                Transfer transfer = new Transfer();
-//
-//
-//                transfer.setAmount(transferAmount);
-//                transfer.setAccount_from(senderAccount.getAccount_id());
-//                transfer.setAccount_to(receiverAccount.getAccount_id());
-//                transfer.setTransfer_type_id(1);
-//                transfer.setTransfer_status_id(1);
-//                transferService.createReceipt(transfer);
-//
-//            }
-//            break;
-//
-//        }
 
 	}
-
-//    //Used to format printed table of Transfer History
-//    private static void displayTransferHistoryTableRow(int transferId, String toFrom, String name, String colorCode, String amount) {
-//        System.out.printf("%-16d%-6s%-20s%1s%10s%n", transferId, toFrom, name, "$" + amount);
-//    }
-////    3012 From: devin, Amount: $100.00, balance: $900.00, Date = 2024-03-09 09:05:22.639
 
 }

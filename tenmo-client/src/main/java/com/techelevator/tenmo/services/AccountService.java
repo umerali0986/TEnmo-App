@@ -57,13 +57,12 @@ public class AccountService {
 
     }
 
-    public void updateAccountBalance(UpdateAccountDto updateAccountDto){
+    public void updateAccountBalance(UpdateAccountDto updateAccountDto, int transferId){
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(authToken);
         HttpEntity<UpdateAccountDto> entity =new HttpEntity<>(updateAccountDto, headers);
-
         try{
-            ResponseEntity<UpdateAccountDto> response = restTemplate.exchange(API_BASE_URL + "/account/updateBalance", HttpMethod.PUT, entity, UpdateAccountDto.class);
+            ResponseEntity<UpdateAccountDto> response = restTemplate.exchange(API_BASE_URL + "/account/updateBalance/transfer/" + transferId, HttpMethod.PUT, entity, UpdateAccountDto.class);
 
         } catch (RestClientResponseException | ResourceAccessException e) {
 
