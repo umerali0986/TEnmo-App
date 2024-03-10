@@ -218,10 +218,9 @@ public class App {
             if(userInput.equalsIgnoreCase("Y")) {
                 transferService.updateTransactionStatus(approvedStatusCode, pendingTransactionId);
 
-
-
                 Account senderAccount = accountService.getAccountByUserId(userService.getUserByAccountId(approvedTransfer.getAccount_from()).getId());
                 Account receiverAccount = accountService.getAccountByUserId(userService.getUserByAccountId(approvedTransfer.getAccount_to()).getId());
+
 
                 if(senderAccount.getBalance().compareTo(approvedTransfer.getAmount()) == -1){
                     transferService.updateTransactionStatus(declinedStatusCode, pendingTransactionId);
@@ -231,12 +230,14 @@ public class App {
                     break;
                 }
                 consoleService.updateAccountBalance(approvedTransfer.getAmount(), receiverAccount.getUserId(), accountService, currentUser, userService, pendingTransactionId);
+                break;
 
             }
             else if (userInput.equalsIgnoreCase("N")) {
                 transferService.updateTransactionStatus(declinedStatusCode, pendingTransactionId);
+                break;
             }
-            break;
+            else System.out.println("Invalid input, please try again");
         }
     }
 

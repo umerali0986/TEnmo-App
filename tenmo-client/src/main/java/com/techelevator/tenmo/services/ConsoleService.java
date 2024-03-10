@@ -227,6 +227,7 @@ public class ConsoleService {
             }
             if (transferAmount.compareTo(accountService.getBalance()) == 1) {
                 System.out.println("Insufficient funds");
+                continue;
             } else {
 
 
