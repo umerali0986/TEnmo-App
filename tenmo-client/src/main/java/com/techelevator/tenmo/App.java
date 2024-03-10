@@ -93,10 +93,10 @@ public class App {
             menuSelection = consoleService.promptForMenuSelection("Please choose an option: ");
             if (menuSelection == 1) {
                 viewCurrentBalance();
+                consoleService.pause();
             } else if (menuSelection == 2) {
                 transferMenu();
             } else if (menuSelection == 3) {
-                //viewPendingRequests();
                 pendingMenu();
             } else if (menuSelection == 4) {
                 sendBucks();
@@ -106,9 +106,9 @@ public class App {
             } else if (menuSelection == 0) {
                 continue;
             } else {
+                System.out.println();
                 System.out.println("Invalid Selection");
             }
-            consoleService.pause();
         }
     }
 
@@ -133,6 +133,7 @@ public class App {
                 selection = Integer.parseInt(userInput);
 
             } catch (NumberFormatException e) {
+                System.out.println();
                 System.out.println("Invalid input, please enter valid option ");
                 continue;
             }
@@ -148,6 +149,7 @@ public class App {
                 running = false;
             }
             else{
+                System.out.println();
                 System.out.println("Invalid input, please enter valid option ");
             }
 
@@ -270,10 +272,9 @@ public class App {
             }
             else if(selection == 2){
                viewTransferDetails();
-               scanner.nextLine();
+               consoleService.pause();
             }
             else if (selection == 0) {
-                running = false;
                 break;
             }
             else{
@@ -291,37 +292,45 @@ public class App {
     private void viewTransferDetails(){
 
         boolean running = true;
+
         while(running) {
+
             System.out.println();
             System.out.print("Please enter transfer Id to see the details :");
-
             String userInput = scanner.nextLine();
             int transferId = 0;
+
             try {
+
                 transferId = Integer.parseInt(userInput);
+                Transfer transferDetails = transferService.getTransferById(transferId);
+
+                if(transferDetails == null) {
+
+                    System.out.println();
+                    System.out.println("Transfer with that Id does not exist.");
+
+                } else if(transferDetails.getAccount_from() != accountService.getAccountByUserId(currentUser.getUser().getId()).getAccount_id() &&
+                    transferDetails.getAccount_to() != accountService.getAccountByUserId(currentUser.getUser().getId()).getAccount_id()){
+
+                    System.out.println();
+                    System.out.println("Transfer with that Id does not exist.");
+
+                } else{
+
+                    consoleService.printTransferDetails(transferDetails);
+                }
 
             } catch (NumberFormatException e) {
+
+                System.out.println();
                 System.out.println("Invalid input, please enter valid option ");
-                continue;
-            }
 
-            Transfer transferDetails = transferService.getTransferById(transferId);
+            } break;
 
-            if(transferDetails == null) {
-                System.out.println("Transfer with that Id does not exist.");
-            }
-            else if(transferDetails.getAccount_from() != accountService.getAccountByUserId(currentUser.getUser().getId()).getAccount_id() &&
-                    transferDetails.getAccount_to() != accountService.getAccountByUserId(currentUser.getUser().getId()).getAccount_id()){
-                System.out.println("Transfer with that Id does not exist.");
-
-            }
-            else{
-
-                consoleService.printTransferDetails(transferDetails);
-            }
-                break;
         }
-        }
+
+    }
 	private void viewTransferHistory() {
         String redColor = "\u001B[31m";
         String resetColor = "\u001B[0m";

@@ -126,6 +126,7 @@ public class ConsoleService {
         System.out.println("Type: " + transferService.getTransferTypeById(transfer.getTransfer_type_id()).getTransferTypeDesc());
         System.out.println("Status: " + transferService.getTransferStatusById(transfer.getTransfer_status_id()).getTransferStatusDesc());
         System.out.println("Amount: $" + transfer.getAmount());
+        System.out.println("Time: " + convertTimestampToFormatedString(transfer.getTransactionDate()));
     }
 
     public void printCurrentBalance(AccountService accountService) {
@@ -243,7 +244,6 @@ public class ConsoleService {
                     transfer.setTransfer_status_id(approvedStatusCode);
                     Transfer createdTransfer = transferServices.createReceipt(transfer);
                     int transferId = createdTransfer.getTransfer_id();
-                    //TODO - need to get transfer ID here
                     updateAccountBalance(transferAmount, recipientId, accountService, currentUser, userService, transferId);
                 } else {
                     transfer.setAccount_from(receiverAccount.getAccount_id());
@@ -251,6 +251,11 @@ public class ConsoleService {
                     transfer.setTransfer_type_id(requestTypeCode);
                     transfer.setTransfer_status_id(pendingStatusCode);
                     transferServices.createReceipt(transfer);
+                    scanner.nextLine();
+                    System.out.println();
+                    System.out.println("----------Request Sent----------");
+                    System.out.println("From: " + currentUser.getUser().getUsername() + ", To: " + userService.getUserById(recipientId).getUsername() + ", Amount: $" + transferAmount);
+                    pause();
                 }
 
             }
@@ -277,10 +282,12 @@ public class ConsoleService {
         updateReceiverAccount.setAmount(transferAmount);
         updateReceiverAccount.setWithdaw(false);
 
-        System.out.println("Transfer Successful");
+        System.out.println();
+        System.out.println("----------Transfer Successful----------");
         accountService.updateAccountBalance(updateSenderAccount, transferId);
         accountService.updateAccountBalance(updateReceiverAccount, transferId);
         System.out.println("From: " + currentUser.getUser().getUsername() + ", To: " + userService.getUserById(recipientId).getUsername() + ", Amount: $" + transferAmount);
+        pause();
     }
 
     //Used to format printed table of Transfer History
@@ -288,9 +295,7 @@ public class ConsoleService {
         String resetColorCode = "\u001B[0m";
         String greenColorCode = "\u001B[32m";
         System.out.printf("%-16d%-6s%-20s", transferId, toFrom, name);
-        LocalDateTime convertedTimeStamp = time.toLocalDateTime();
-        SimpleDateFormat format = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss");
-        String formattingTimeStamp = format.format(Timestamp.valueOf(convertedTimeStamp));
+        String formattingTimeStamp = convertTimestampToFormatedString(time);
         if (!isSending) {
             System.out.print(greenColorCode);
         }
@@ -299,5 +304,11 @@ public class ConsoleService {
         System.out.printf("%15s%28s%n", (balance.equals("") ? "Pending" : balance), formattingTimeStamp);
     }
 
+    public static String convertTimestampToFormatedString(Timestamp time) {
 
+        LocalDateTime convertedTimeStamp = time.toLocalDateTime();
+        SimpleDateFormat format = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss");
+        String formattingTimeStamp = format.format(Timestamp.valueOf(convertedTimeStamp));
+        return formattingTimeStamp;
+    }
 }
