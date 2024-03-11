@@ -224,7 +224,7 @@ public class ConsoleService {
                 System.out.println("Transfer amount must not contain more than 2 decimal places.");
                 continue;
             }
-            if (transferAmount.compareTo(accountService.getBalance()) == 1) {
+            if (transferAmount.compareTo(accountService.getBalance()) == 1 && isSending) {
                 System.out.println("Insufficient funds");
                 continue;
             } else {
