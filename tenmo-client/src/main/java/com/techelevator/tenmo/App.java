@@ -100,7 +100,6 @@ public class App {
                 pendingMenu();
             } else if (menuSelection == 4) {
                 sendBucks();
-                scanner.nextLine();
             } else if (menuSelection == 5) {
                 requestBucks();
             } else if (menuSelection == 0) {
@@ -368,24 +367,30 @@ public class App {
 	private void sendBucks() {
 
         consoleService.printOtherUsers(userService.getOtherUsers());
-        boolean running = true;
         int recipientId = 0;
 
         recipientId = consoleService.promptUserToInsertRecipientId(userService,currentUser);
 
-               consoleService.promptUserToInsertTransferAmount(accountService,currentUser,transferService,recipientId, userService, true);
+        if (recipientId != 0) {
+
+            consoleService.promptUserToInsertTransferAmount(accountService, currentUser, transferService, recipientId, userService, true);
+
+        }
 
 	}
 
 	private void requestBucks() {
         consoleService.printOtherUsers(userService.getOtherUsers());
-        boolean running = true;
         int recipientId = 0;
 
       recipientId = consoleService.promptUserToInsertRecipientId(userService, currentUser);
 
-        consoleService.promptUserToInsertTransferAmount(accountService, currentUser, transferService,recipientId, userService, false);
+      if (recipientId != 0) {
 
-	}
+          consoleService.promptUserToInsertTransferAmount(accountService, currentUser, transferService, recipientId, userService, false);
+
+      }
+
+    }
 
 }

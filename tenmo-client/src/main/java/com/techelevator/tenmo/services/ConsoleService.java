@@ -169,7 +169,6 @@ public class ConsoleService {
             try {
                 recipientId = Integer.parseInt(userInput);
                 if (recipientId == 0) {
-                    running = false;
                     break;
                 }
 
