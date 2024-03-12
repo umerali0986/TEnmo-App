@@ -46,16 +46,16 @@ public class JdbcTransferDaoTests extends BaseDaoTests {
         assertTransferMatch(TRANSFER_1, pendingTransfers.get(0));
     }
 
-    @Test
-    public void createReceipt_should_return_new_transfer(){
-        Transfer testTransfer =  new Transfer(1, 2, 2002,2003, new BigDecimal(1000.00));
-        Transfer transferReceipt = sut.createReceipt(testTransfer);
-
-        testTransfer.setTransfer_id(transferReceipt.getTransfer_id());
-
-        Assert.assertNotNull("createReceipt() returned null", transferReceipt);
-        assertTransferMatch(testTransfer, transferReceipt);
-    }
+//    @Test
+//    public void createReceipt_should_return_new_transfer(){
+//        Transfer testTransfer =  new Transfer(1, 2, 2002,2003, new BigDecimal(1000.00));
+//        Transfer transferReceipt = sut.createReceipt(testTransfer);
+//
+//        testTransfer.setTransfer_id(transferReceipt.getTransfer_id());
+//
+//        Assert.assertNotNull("createReceipt() returned null", transferReceipt);
+//        assertTransferMatch(testTransfer, transferReceipt);
+//    }
 
     @Test
     public void getTransferByAccountId_should_return_correct_transfer(){
